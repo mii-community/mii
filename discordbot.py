@@ -19,6 +19,5 @@ async def on_message(message):
         channel = client.get_channel(678041133179469834)
         await channel.send('い')
 
-
 # Botの起動とDiscordサーバーへの接続
 client.run('TONjc4MDM0Mzc3OTc2MDUzNzYx.Xkc80Q.NTXUeZe9HSPR8IheNo2RuYXZpxQKEN')
