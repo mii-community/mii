@@ -19,7 +19,7 @@ async def on_message(message):
         channel = client.get_channel(678041133179469834)
         user_count = sum(1 for member in chnannel.members if not member.bot)
         message = f"{message.author.name}が参加しました。¥n{user_count}人目の参加者です。"
-        await message.channel.send("")
+        await message.channel.send(message)
 
 # Botの起動とDiscordサーバーへの接続
 client.run('Njc4MDM0Mzc3OTc2MDUzNzYx.XkdcfA.wNgxL19wmcvvXIsysVOxWmNYDhE')
