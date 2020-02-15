@@ -23,5 +23,12 @@ async def on_message(message):
             await dm.send(f"{message.author.mention} アカウントが登録されました。\nまず何をすればいいかわからない方へ▽\nstep1: <#655311853844430858> にて自己紹介をしましょう！\nstep2: <#653919145729064970> から各サーバーに入室してください！\n【Tips】スパム防止のため #welcome と #register は非表示になりました。そして #welcome の上位互換の <#661167351412162580> が閲覧できるようになりました。")
         else: await message.channel.send("ここでは実行できません。")
 
+# サーバーアンケート機能処理部
+@client.event
+async def on_message(message):
+    if message.author.bot: return
+    if message.channel.id == 678136433512284208:
+        [await message.add_reaction(i) for i in (':sansei:', ':hantai:')]
+
 # Botの起動とDiscordサーバーへの接続処理部
 client.run('Njc4MDM0Mzc3OTc2MDUzNzYx.XkdcfA.wNgxL19wmcvvXIsysVOxWmNYDhE')
