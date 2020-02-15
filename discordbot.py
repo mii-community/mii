@@ -8,6 +8,7 @@ async def on_ready():
     channel = client.get_channel(678041133179469834)
     await channel.send('起動しました。')
 
+# メッセージ送信時の処理一覧
 @client.event
 async def on_message(message):
     if message.author.bot: return
@@ -28,6 +29,12 @@ async def on_message(message):
         hantai = '<:hantai:660392595159121959>'
         await message.add_reaction(sansei)
         await message.add_reaction(hantai)
+
+# リアクション追加時の処理一覧
+async def on_raw_reaction_add(payload):
+        if reaction.emoji == '📌':
+            await reaction.message.pin()
+            await channel.send(f"{reaction.user.name}がメッセージをピン留めしました。")
 
 # Botの起動とDiscordサーバーへの接続処理部
 client.run('Njc4MDM0Mzc3OTc2MDUzNzYx.XkdcfA.wNgxL19wmcvvXIsysVOxWmNYDhE')
