@@ -8,16 +8,13 @@ async def on_ready():
     await channel.send('起動しました。')
 
 # アカウント登録
-# 受付チャンネルの指定
-register = client.get_channel(678136433512284208)
 @client.event
 async def on_message(message):
     # BOTのメッセージに反応させない
     if message.author.bot: return
-    # コマンドを受け付けるチャンネルだった場合
-    if message.channel.id == register:
-        # コマンドを受け取った場合
-        if message.content == "!register":
+    if message.content == "!register":
+        register_channel_id = client.get_channel(678136433512284208)
+        if message.channel.id == register_channel_id:
             # 参加者通知のチャンネルを指定
             channel = client.get_channel(678041133179469834)
             # メンバー数を再計算
@@ -28,8 +25,7 @@ async def on_message(message):
             dm = await message.author.create_dm()
             # ダイレクトメッセージへチュートリアルを送信
             await dm.send(f"{message.author.mention} アカウントが登録されました。\nまず何をすればいいかわからない方へ▽\nstep1: <#655311853844430858> にて自己紹介をしましょう！\nstep2: <#653919145729064970> から各サーバーに入室してください！\n【Tips】スパム防止のため #welcome と #register は非表示になりました。そして #welcome の上位互換の <#661167351412162580> が閲覧できるようになりました。")
-    # コマンドを受け付けないチャンネルだった場合
-    else: await message.send("ここでは実行できません。")
+        else: await message.send("ここでは実行できません。")
         
 # Botの起動とDiscordサーバーへの接続
 client.run('Njc4MDM0Mzc3OTc2MDUzNzYx.XkdcfA.wNgxL19wmcvvXIsysVOxWmNYDhE')
