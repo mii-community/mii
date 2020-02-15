@@ -20,4 +20,4 @@ async def on_message(message):
         await message.channel.send("メッセージです")
 
 # Botの起動とDiscordサーバーへの接続
-client.run('TONjc4MDM0Mzc3OTc2MDUzNzYx.Xkc80Q.NTXUeZe9HSPR8IheNo2RuYXZpxQKEN')
+client.run('Njc4MDM0Mzc3OTc2MDUzNzYx.XkdcfA.wNgxL19wmcvvXIsysVOxWmNYDhE')
