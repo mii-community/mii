@@ -13,8 +13,8 @@ async def on_ready():
 async def on_message(message):
     if message.author.bot: return
     if message.content == "!register":
-        channel = client.get_channel(678041133179469834)
-        user_count = sum(1 for member in channel.members if not member.bot)
+        join = client.get_channel(678041133179469834)
+        user_count = sum(1 for member in join.members if not member.bot)
         # 参加者通知へメッセージ送信
         await channel.send(f"{message.author.name}が参加しました。\n{user_count}人目の参加者です。")
         # ダイレクトメッセージを作成し、チュートリアルを送信
