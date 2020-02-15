@@ -17,8 +17,7 @@ async def on_message(message):
     if message.author.bot: return
     # if !registerを受け取ったとき then チャンネルを照合する
     if message.content == "!register":
-        # if 適合チャンネルだったとき then アカウント登録の処理をする
-        if message.channel.id == register:
+
             
             # メンバー数を再計算
             user_count = sum(1 for member in join.members if not member.bot)
