@@ -34,8 +34,7 @@ async def on_message(message):
 async def on_raw_reaction_add(payload):
     #ピン留め気嚢処理部
     # if 絵文字が📌か判断
-    pushpin = '📌'
-    if payload.emoji == pushpin:
+    if payload.emoji.name == '📌':
         # リアクションがついたメッセージのチャンネルIDとメッセージIDを取得
         message = await client.get_channel(payload.channel_id).fetch_message(payload.message_id)
         # リアクションをつけたメンバーのユーザーIDを取得
