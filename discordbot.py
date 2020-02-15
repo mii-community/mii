@@ -14,12 +14,18 @@ async def on_message(message):
     # BOTのメッセージに反応させない
     if message.author == client.user:
         return
+
     # コマンド処理
     if message.content == "!register":
+        # チャンネルを指定
         channel = client.get_channel(678041133179469834)
+        # メンバー数を再計算
         user_count = sum(1 for member in channel.members if not member.bot)
-        reply = f"{message.author.name}が参加しました。\n{user_count}人目の参加者です。"
-        await message.channel.send(reply)
+        # 指定したチャンネルへのメッセージ送信
+        await message.channel.send(f"{message.author.name}が参加しました。\n{user_count}人目の参加者です。")
+        # ダイレクトメッセージへのメッセージ送信
+        dm = await message.author.create_dm()
+        await dm.send(f"{message.author.mention} アカウントが登録されました。\nまず何をすればいいかわからない方へ▽\nstep1: #自己紹介 にて自己紹介をしましょう！\nstep2: #入退室パネル から各サーバーに入室してください！\n【Tips】スパム防止のため #welcome と #register は非表示になりました。そして #welcome の上位互換の #information が閲覧できるようになりました。")
 
 # Botの起動とDiscordサーバーへの接続
 client.run('Njc4MDM0Mzc3OTc2MDUzNzYx.XkdcfA.wNgxL19wmcvvXIsysVOxWmNYDhE')
