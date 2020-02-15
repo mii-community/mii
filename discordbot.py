@@ -14,7 +14,7 @@ async def on_message(message):
     if message.author.bot: return
     if message.content == "!register":
         if message.channel.id == 678136433512284208:
-            role = discord.utils.get(message.guild.roles, name="test")
+            role = discord.utils.get(message.guild.roles, name="member")
             await message.author.add_roles(role)
             join = client.get_channel(678041133179469834)
             user_count = sum(1 for member in join.members if not member.bot)
