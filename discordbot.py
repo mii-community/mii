@@ -1,17 +1,12 @@
-# インストールした discord.py を読み込む
 import discord
 
-# 自分のBotのアクセストークンに置き換えてください
-TOKEN = 'Njc4MDM0Mzc3OTc2MDUzNzYx.Xkc80Q.NTXUeZe9HSPR8IheNo2RuYXZpxQ'
-
-# 接続に必要なオブジェクトを生成
 client = discord.Client()
 
 # 起動時に動作する処理
 @client.event
 async def on_ready():
-    # 起動したらターミナルにログイン通知が表示される
-    print('ログインしました')
+    channel = client.get_channel(678041133179469834)
+    await channel.send('起動しました。')
 
 # メッセージ受信時に動作する処理
 @client.event
@@ -21,7 +16,9 @@ async def on_message(message):
         return
     # 「/register」と発言したら「はじめまして」が返る処理
     if message.content == '/register':
-        await message.channel.send('い')
+        channel = client.get_channel(678041133179469834)
+        await channel.send('い')
+
 
 # Botの起動とDiscordサーバーへの接続
-client.run(TOKEN)
+client.run('TONjc4MDM0Mzc3OTc2MDUzNzYx.Xkc80Q.NTXUeZe9HSPR8IheNo2RuYXZpxQKEN')
