@@ -13,10 +13,10 @@ async def on_ready():
 async def on_message(message):
     if message.author.bot: return
     if message.content == "!register":
-        if message.channel.id == 678136433512284208:
+        if message.channel.id == 653111096747491328:
             role = discord.utils.get(message.guild.roles, name="member")
             await message.author.add_roles(role)
-            join = client.get_channel(678041133179469834)
+            join = client.get_channel(653923742245978129)
             user_count = sum(1 for member in join.members if not member.bot)
             await join.send(f"{message.author.name}が参加しました。\n{user_count}人目の参加者です。")
             dm = await message.author.create_dm()
