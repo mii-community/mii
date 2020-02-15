@@ -9,13 +9,13 @@ async def on_ready():
 
 # アカウント登録
 # 受付チャンネルの指定
-register_channel_id = 678136433512284208
+register = client.get_channel(678136433512284208)
 @client.event
 async def on_message(message):
     # BOTのメッセージに反応させない
     if message.author.bot: return
     # コマンドを受け付けるチャンネルだった場合
-    if message.channel.id == register_channel_id:
+    if message.channel.id == register:
         # コマンドを受け取った場合
         if message.content == "!register":
             # 参加者通知のチャンネルを指定
