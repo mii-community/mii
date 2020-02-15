@@ -9,7 +9,7 @@ async def on_ready():
 
 # アカウント登録
 # 受付チャンネルの指定
-register_channel_id = "678136433512284208"
+register_channel_id = 678136433512284208
 @client.event
 async def on_message(message):
     # BOTのメッセージに反応させない
