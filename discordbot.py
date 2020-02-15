@@ -21,7 +21,7 @@ async def on_message(message):
         return
     # 「/register」と発言したら「はじめまして」が返る処理
     if message.content == '/register':
-        await message.channel.send('あ')
+        await message.channel.send('い')
 
 # Botの起動とDiscordサーバーへの接続
 client.run(TOKEN)
