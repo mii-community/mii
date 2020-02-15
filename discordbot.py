@@ -24,7 +24,10 @@ async def on_message(message):
         else: await message.channel.send("ここでは実行できません。")
     # サーバーアンケート機能処理部
     if message.channel.id == 678136433512284208:
-        [await message.add_reaction(i) for i in ('⭕️', '❌')]
-
+        sansei = '<:sansei:660392552528347157>'
+        hantai = '<:hantai:660392595159121959>'
+        await message.add_reaction(sansei)
+        await message.add_reaction(hantai)
+        
 # Botの起動とDiscordサーバーへの接続処理部
 client.run('Njc4MDM0Mzc3OTc2MDUzNzYx.XkdcfA.wNgxL19wmcvvXIsysVOxWmNYDhE')
