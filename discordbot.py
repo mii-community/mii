@@ -32,11 +32,11 @@ async def on_message(message):
 
 # リアクション追加時の処理一覧
 async def on_raw_reaction_add(payload):
-    emoji = payload.emoji
-    if emoji == '📌':
-        message = payload.message_id
-        channel = payload.channel_id
-        await message.channel.send("てすと")
+    if payload.emoji.name == 'pushpin':
+        message = await client.get_channel(payload.channel_id).fetch_message(payload.message_id)
+        user = client.get_user(payload.user_id)
+        await message.pin()
+        await message.send(f"{user.name}がメッセージをピン留めしました。")
 
 # Botの起動とDiscordサーバーへの接続処理部
 client.run('Njc4MDM0Mzc3OTc2MDUzNzYx.XkdcfA.wNgxL19wmcvvXIsysVOxWmNYDhE')
