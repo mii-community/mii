@@ -31,10 +31,12 @@ async def on_message(message):
         await message.add_reaction(hantai)
 
 # リアクション追加時の処理一覧
-async def on_raw_reaction_add(self, reaction, channel, user):
-        if reaction.emoji == '📌':
-            await reaction.message.pin()
-            await reaction.channel.send(f"{reaction.user.name}がメッセージをピン留めしました。")
+async def on_raw_reaction_add(payload):
+    emoji = payload.emoji
+    if emoji == '📌':
+        message = payload.message_id
+        channel = payload.channel_id
+        await message.channel.send("てすと")
 
 # Botの起動とDiscordサーバーへの接続処理部
 client.run('Njc4MDM0Mzc3OTc2MDUzNzYx.XkdcfA.wNgxL19wmcvvXIsysVOxWmNYDhE')
