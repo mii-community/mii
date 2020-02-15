@@ -17,9 +17,9 @@ async def on_message(message):
     # コマンド処理
     if message.content == "!register":
         channel = client.get_channel(678041133179469834)
-        user_count = sum(1 for member in chnannel.members if not member.bot)
-        message = f"{message.author.name}が参加しました。¥n{user_count}人目の参加者です。"
-        await message.channel.send(message)
+        user_count = sum(1 for member in channel.members if not member.bot)
+        reply = f"{message.author.name}が参加しました。¥n{user_count}人目の参加者です。"
+        await message.channel.send(reply)
 
 # Botの起動とDiscordサーバーへの接続
 client.run('Njc4MDM0Mzc3OTc2MDUzNzYx.XkdcfA.wNgxL19wmcvvXIsysVOxWmNYDhE')
