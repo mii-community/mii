@@ -18,7 +18,7 @@ async def on_message(message):
     # コマンド処理
     if message.content == "!register":
         # コマンドを受け付けるチャンネルを指定
-        if message.channel ！= register_channel_id:
+        if message.channel != register_channel_id:
             await message.send("ここでは実行できません。")
             return
         # 参加者通知のチャンネルを指定
