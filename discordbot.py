@@ -19,7 +19,7 @@ async def on_message(message):
             await message.author.add_roles(role)
             join = client.get_channel(653923742245978129)
             user_count = sum(1 for member in join.members if not member.bot)
-            await join.send(f"{message.author.name}が参加しました。\n{user_count}人目の参加者です。")
+            await join.send(f"{message.author.name}が参加しました。\n現在の参加者数は{user_count}人です。")
             dm = await message.author.create_dm()
             await dm.send(f"{message.author.mention} アカウントが登録されました。\nまず何をすればいいかわからない方へ▽\nstep1: <#655311853844430858> にて自己紹介をしましょう！\nstep2: <#653919145729064970> から各サーバーに入室してください！\n【Tips】スパム防止のため #welcome と #register は非表示になりました。そして #welcome の上位互換の <#661167351412162580> が閲覧できるようになりました。")
         else: await message.channel.send("ここでは実行できません。")
@@ -37,12 +37,11 @@ async def on_raw_reaction_add(payload):
     if payload.emoji.name == '📌':
         user = client.get_user(payload.user_id)
         if user.bot: return
-        else:
-            channel = client.get_channel(payload.channel_id)
-            message = await channel.fetch_message(payload.message_id)
-            if message.pinned == 0:
-                await message.pin()
-                await channel.send(f"{user.name}がメッセージをピン留めしました。")
+        channel = client.get_channel(payload.channel_id)
+        message = await channel.fetch_message(payload.message_id)
+        if message.pinned == False:
+            await message.pin()
+            await channel.send(f"{user.name}がピン留めしました。")
 
 # リアクション解除時の処理一覧
 @client.event
@@ -51,20 +50,15 @@ async def on_raw_reaction_remove(payload):
     if payload.emoji.name == '📌':
         user = client.get_user(payload.user_id)
         if user.bot: return
-        else:
-            channel = client.get_channel(payload.channel_id)
-            message = await channel.fetch_message(payload.message_id)
-            if message.pinned == 1:
-                reaction = discord.utils.get(message.reactions, emoji=payload.emoji.name)
-                # reaction単体だと比較できなかったためandでcountも追加
-                # 修正候補ここから
-                if reaction and reaction.count == 1: return
-                # ここまで
-                else:
-                    await message.unpin()
-                    await channel.send("リアクションがゼロになったため、ピン留めが解除されました。")
-                    embed = discord.Embed(title=f"送信者:{message.author}",description=f"メッセージ内容:{message.content}",color=0xff0000)
-                    await channel.send(embed=embed)
+        channel = client.get_channel(payload.channel_id)
+        message = await channel.fetch_message(payload.message_id)
+        if message.pinned == True:
+            reaction = discord.utils.get(message.reactions, emoji=payload.emoji.name)
+            if reaction: return
+            await message.unpin()
+            await channel.send("リアクションがゼロになったため、ピン留めが解除されました。")
+            embed = discord.Embed(title=f"送信者:{message.author}",description=f"メッセージ内容:{message.content}",color=0xff0000)
+            await channel.send(embed=embed)
 
 # Botの起動とDiscordサーバーへの接続処理部
 client.run('Njc4MDM0Mzc3OTc2MDUzNzYx.XkdcfA.wNgxL19wmcvvXIsysVOxWmNYDhE')
