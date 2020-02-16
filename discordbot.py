@@ -40,8 +40,9 @@ async def on_raw_reaction_add(payload):
         else:
             channel = client.get_channel(payload.channel_id)
             message = await channel.fetch_message(payload.message_id)
-            await message.pin()
-            await message.channel.send(f"{user.name}がメッセージをピン留めしました。")
+            if message.pinned == 0: 
+                await message.pin()
+                await message.channel.send(f"{user.name}がメッセージをピン留めしました。")
 
 # Botの起動とDiscordサーバーへの接続処理部
 client.run('Njc4MDM0Mzc3OTc2MDUzNzYx.XkdcfA.wNgxL19wmcvvXIsysVOxWmNYDhE')
