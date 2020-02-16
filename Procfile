@@ -1,1 +1,1 @@
-discordbot: python discordbot.py
+bot: python amazusystem.py
