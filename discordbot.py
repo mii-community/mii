@@ -31,6 +31,7 @@ async def on_message(message):
         await message.add_reaction(hantai)
 
 # リアクション追加時の処理一覧
+@client.event
 async def on_raw_reaction_add(payload):
     #ピン留め機能処理部
     if str(payload.emoji) == "📌":
