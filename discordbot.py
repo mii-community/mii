@@ -37,7 +37,7 @@ async def on_raw_reaction_add(payload):
     if payload.emoji.name == '📌':
         # チャンネルIDとメッセージIDとユーザーを取得
         channel = client.get_channel(payload.channel_id)
-        message = fetch_message(payload.message_id)
+        message = channel.fetch_message(payload.message_id)
         user = client.get_user(payload.user)
         # ピン留め
         await message.pin()
