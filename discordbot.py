@@ -51,12 +51,13 @@ async def on_raw_reaction_remove(payload):
     if payload.emoji.name == '📌':
         user = client.get_user(payload.user_id)
         if user.bot: return
-        else: 
+        else:
             channel = client.get_channel(payload.channel_id)
             message = await channel.fetch_message(payload.message_id)
-            if message.reaction.count == 0:
-                await message.unpin()
-                await message.channel.send(f"メッセージのピン留めを解除しました。\n>>> {message.content}")
+            if message.pinned == 1:
+                if reaction.count == 0:
+                    await message.unpin()
+                    await message.channel.send(f"メッセージのピン留めを解除しました。")
 
 # Botの起動とDiscordサーバーへの接続処理部
 client.run('Njc4MDM0Mzc3OTc2MDUzNzYx.XkdcfA.wNgxL19wmcvvXIsysVOxWmNYDhE')
