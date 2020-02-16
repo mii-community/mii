@@ -34,7 +34,7 @@ async def on_message(message):
 @client.event
 async def on_raw_reaction_add(payload):
     #ピン留め機能処理部
-    if str(payload.emoji) == "📌":
+    if payload.emoji.name == '📌':
         user = client.get_user(payload.user_id)
         if user.bot: return
         else:
