@@ -55,7 +55,7 @@ async def on_raw_reaction_remove(payload):
             channel = client.get_channel(payload.channel_id)
             message = await channel.fetch_message(payload.message_id)
             if message.pinned == 1:
-                if message.count == 0:
+                if message.count == 1:
                     await channel.send(f"60行目")
                     await message.unpin()
                     await message.channel.send(f"メッセージのピン留めを解除しました。")
