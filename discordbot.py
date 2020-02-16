@@ -42,7 +42,7 @@ async def on_raw_reaction_add(payload):
             message = await channel.fetch_message(payload.message_id)
             if message.pinned == 0:
                 await message.pin()
-                await message.channel.send(f"{user.name}がメッセージをピン留めしました。")
+                await channel.send(f"{user.name}がメッセージをピン留めしました。")
 
 # リアクション追加時の処理一覧
 @client.event
@@ -55,10 +55,13 @@ async def on_raw_reaction_remove(payload):
             channel = client.get_channel(payload.channel_id)
             message = await channel.fetch_message(payload.message_id)
             if message.pinned == 1:
-                await channel.send(f"60行目")
-                if payload.count == 0:
+                await channel.send(f"58行目")
+                if message.reaction.count == 0:
                     await message.unpin()
                     await message.channel.send(f"メッセージのピン留めを解除しました。")
-
+                elif message.reaction.count == 1:
+                    await message.unpin()
+                    await message.channel.send(f"2.メッセージのピン留めを解除しました。")
+                else: channel.send(f"失敗")
 # Botの起動とDiscordサーバーへの接続処理部
 client.run('Njc4MDM0Mzc3OTc2MDUzNzYx.XkdcfA.wNgxL19wmcvvXIsysVOxWmNYDhE')
