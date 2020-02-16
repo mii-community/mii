@@ -5,7 +5,7 @@ client = discord.Client()
 # 起動通知処理部
 @client.event
 async def on_ready():
-    channel = client.get_channel(678041133179469834)
+    channel = client.get_channel(678483492564107284)
     await channel.send('起動しました。')
 
 # メッセージ送信時の処理一覧
