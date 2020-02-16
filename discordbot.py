@@ -40,7 +40,7 @@ async def on_raw_reaction_add(payload):
         else:
             channel = client.get_channel(payload.channel_id)
             message = await channel.fetch_message(payload.message_id)
-            if message.pinned == 0: 
+            if message.pinned == 0:
                 await message.pin()
                 await message.channel.send(f"{user.name}がメッセージをピン留めしました。")
 
@@ -55,6 +55,7 @@ async def on_raw_reaction_remove(payload):
             channel = client.get_channel(payload.channel_id)
             message = await channel.fetch_message(payload.message_id)
             if message.pinned == 1:
+                await message.channel.send("58行目")
                 if reaction.count == 0:
                     await message.unpin()
                     await message.channel.send(f"メッセージのピン留めを解除しました。")
