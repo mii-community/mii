@@ -32,17 +32,17 @@ async def on_message(message):
 
 # リアクション追加時の処理一覧
 async def on_raw_reaction_add(payload):
-    #ピン留め気嚢処理部
+    #ピン留め機能処理部
     # if 絵文字が📌か判断
     if payload.emoji.name == '📌':
-        # リアクションがついたメッセージのチャンネルIDとメッセージIDを取得
-        message = await client.get_channel(payload.channel_id).fetch_message(payload.message_id)
-        # リアクションをつけたメンバーのユーザーIDを取得
-        user = client.get_user(payload.user_id)
-        # ピン留め処理
+        # チャンネルIDとメッセージIDとユーザーを取得
+        channel = client.get_channel(payload.channel_id)
+        message = fetch_message(payload.message_id)
+        user = client.get_user(payload.user)
+        # ピン留め
         await message.pin()
         # ピン留めされたメッセージのチャンネルでメッセージを送信
-        await message.send(f"{user.name}がメッセージをピン留めしました。")
+        await message.channel.send(f"{user.name}がメッセージをピン留めしました。")
 
 # Botの起動とDiscordサーバーへの接続処理部
 client.run('Njc4MDM0Mzc3OTc2MDUzNzYx.XkdcfA.wNgxL19wmcvvXIsysVOxWmNYDhE')
