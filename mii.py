@@ -13,12 +13,16 @@ CH_STARTUP = int(os.getenv("CH_STARTUP", "678483492564107284"))
 CH_REGISTER = int(os.getenv("CH_REGISTER", "653111096747491328"))
 CH_JOIN = int(os.getenv("CH_JOIN", "653923742245978129"))
 CH_QUESTIONNAIRE = int(os.getenv("CH_QUESTIONNAIRE", "660392800399130633"))
-CH_ADDROOM = int(os.getenv("CH_ADDROOM", "702042912338346114"))
-CH_ADDTHREAD = int(os.getenv("CH_ADDTHREAD", "702030388033224714"))
+CH_ROOM = int(os.getenv("CH_ADDROOM", "702042912338346114"))
+CH_THREAD = int(os.getenv("CH_ADDTHREAD", "702030388033224714"))
+
 CAT_ROOM = int(os.getenv("CAT_ROOM", "702044270609170443"))
 CAT_THREAD = int(os.getenv("CAT_THREAD", "662856289151615025"))
+CAT_ARCHIVE = int(os.getenv("CAT_ARCHIVE", "702074011772911656"))
+
 EMOJI_SANSEI = os.getenv("EMOJI_SANSEI", "<:sansei:660392552528347157>")
 EMOJI_HANTAI = os.getenv("EMOJI_HANTAI", "<:hantai:660392595159121959>")
+
 REGISTER_ROLE_NAME = os.getenv("REGISTER_ROLE_NAME", "member")
 
 
@@ -48,29 +52,58 @@ async def register(message):
     )
 
 
-async def addroom(message):
-    if not message.channel.id == CH_ADDROOM:
+async def add_room(message):
+    if not message.channel.id == CH_ROOM:
         await message.channel.send("ここでは実行できません。")
         return
     ch_name = str(message.author.display_name + "の部屋")
-    new_channel = await client.get_channel(CAT_ROOM).create_text_channel(name= ch_name)
-    await message.channel.send(
-        f"{message.author.mention} {new_channel.mention} を作成しました。"
-    ) 
+    new_channel = await client.get_channel(CAT_ROOM).create_text_channel(name=ch_name)
     channel = client.get_channel(new_channel.id)
     creator = channel.guild.get_member(message.author.id)
     await channel.set_permissions(creator, manage_channels=True, manage_messages=True, manage_permissions=True)
+    await message.channel.send(
+        f"{message.author.mention} {new_channel.mention} を作成しました。"
+    ) 
 
 
-async def addthread(message):
-    if not message.channel.id == CH_ADDTHREAD:
+
+async def open_thread(message):
+    if not message.channel.id == CH_THREAD:
         await message.channel.send("ここでは実行できません。")
         return
     name_search = message.content
     ch_name = str(name_search[6:])
-    new_channel = await client.get_channel(CAT_THREAD).create_text_channel(name= ch_name) 
-    reply = f"{message.author.mention} {new_channel.mention} を作成しました。"
-    await message.channel.send(reply)
+    ch_search = discord.utils.get(message.guild.channels, name=ch_name)
+    if not ch_search: 
+        new_channel = await client.get_channel(CAT_THREAD).create_text_channel(name=ch_name) 
+        await message.channel.send(
+        f"{message.author.mention} {new_channel.mention} を作成しました。"
+        )
+        return
+    elif ch_search.category.id == CAT_THREAD:
+        await message.channel.send(
+            f"{message.author.mention} {ch_search.mention} はもう作られています。"
+        ) 
+        return
+    elif ch_search.category.id == CAT_ARCHIVE:
+        await ch_search.edit(category=client.get_channel(CAT_THREAD))
+        role = discord.utils.get(message.guild.roles, name=REGISTER_ROLE_NAME)
+        await ch_search.set_permissions(role, read_messages=True)
+        await message.channel.send(
+            f"{message.author.mention} {ch_search.mention} をアーカイブから戻しました。"
+        ) 
+
+
+async def close_thread(message):
+    if not message.category.id == CAT_THREAD:
+        await message.channel.send("ここでは実行できません。")
+        return
+    if message.author.guild_permissions.administrator:
+        role = discord.utils.get(message.guild.roles, name=REGISTER_ROLE_NAME)
+        await message.channel.set_permissions(role, read_messages=False)
+        await message.channel.edit(category=client.get_channel(CAT_ARCHIVE))
+    else:
+        await message.channel.send("権限がありません。") 
 
 
 async def pin(reaction_event):
@@ -117,6 +150,7 @@ async def on_ready():
     await client.get_channel(CH_STARTUP).send("start up succeed. ")
     print("start up succeed.")
 
+
 @client.event
 async def on_message(message):
     if is_bot(message.author):
@@ -124,14 +158,16 @@ async def on_message(message):
     if message.content == "!register":
         await register(message)
     elif message.content == "!open":
-        await addroom(message)
-    elif message.content.startswith('!open'):
-        await addthread(message)
+        await add_room(message)
+    elif message.content.startswith("!open"):
+        await open_thread(message)
+    elif message.content == "!close":
+        await close_thread(message)
+    elif message.content == "!purge":
+        await purge(message)
     elif message.channel.id == CH_QUESTIONNAIRE:
         await message.add_reaction(EMOJI_SANSEI)
         await message.add_reaction(EMOJI_HANTAI)
-    elif message.content == '!purge':
-        await purge(message)
 
 
 @client.event
