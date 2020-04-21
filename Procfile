@@ -1,1 +1,1 @@
-bot: python amazusystem.py
+bot: python mii.py
