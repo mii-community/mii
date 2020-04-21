@@ -13,6 +13,10 @@ CH_STARTUP = int(os.getenv("CH_STARTUP", "678483492564107284"))
 CH_REGISTER = int(os.getenv("CH_REGISTER", "653111096747491328"))
 CH_JOIN = int(os.getenv("CH_JOIN", "653923742245978129"))
 CH_QUESTIONNAIRE = int(os.getenv("CH_QUESTIONNAIRE", "660392800399130633"))
+CH_ADDROOM = int(os.getenv("CH_ADDROOM", "702042912338346114"))
+CH_ADDTHREAD = int(os.getenv("CH_ADDTHREAD", "702030388033224714"))
+CAT_ROOM = int(os.getenv("CAT_ROOM", "702044270609170443"))
+CAT_THREAD = int(os.getenv("CAT_THREAD", "662856289151615025"))
 EMOJI_SANSEI = os.getenv("EMOJI_SANSEI", "<:sansei:660392552528347157>")
 EMOJI_HANTAI = os.getenv("EMOJI_HANTAI", "<:hantai:660392595159121959>")
 REGISTER_ROLE_NAME = os.getenv("REGISTER_ROLE_NAME", "member")
@@ -44,6 +48,31 @@ async def register(message):
     )
 
 
+async def addroom(message):
+    if not message.channel.id == CH_ADDROOM:
+        await message.channel.send("ここでは実行できません。")
+        return
+    ch_name = str(message.author.display_name + "の部屋")
+    new_channel = await client.get_channel(CAT_ROOM).create_text_channel(name= ch_name)
+    await message.channel.send(
+        f"{message.author.mention} {new_channel.mention} を作成しました。"
+    ) 
+    channel = client.get_channel(new_channel.id)
+    creator = channel.guild.get_member(message.author.id)
+    await channel.set_permissions(creator, manage_channels=True, manage_messages=True, manage_permissions=True)
+
+
+async def addthread(message):
+    if not message.channel.id == CH_ADDTHREAD:
+        await message.channel.send("ここでは実行できません。")
+        return
+    name_search = message.content
+    ch_name = str(name_search[6:])
+    new_channel = await client.get_channel(CAT_THREAD).create_text_channel(name= ch_name) 
+    reply = f"{message.author.mention} {new_channel.mention} を作成しました。"
+    await message.channel.send(reply)
+
+
 async def pin(reaction_event):
     channel = await client.fetch_channel(reaction_event.channel_id)
     message = await channel.fetch_message(reaction_event.message_id)
@@ -70,6 +99,14 @@ async def unpin(reaction_event):
     await channel.send("リアクションがゼロになったため、ピン留めが解除されました。", embed=embed)
 
 
+async def purge(message):
+    if message.author.guild_permissions.administrator:
+        await message.channel.purge()
+        await message.channel.send("✅")
+    else:
+        await message.channel.send("権限がありません。")
+
+
 def is_bot(user):
     return user.bot
 
@@ -78,7 +115,7 @@ def is_bot(user):
 @client.event
 async def on_ready():
     await client.get_channel(CH_STARTUP).send("start up succeed. ")
-
+    print("start up succeed.")
 
 @client.event
 async def on_message(message):
@@ -86,9 +123,15 @@ async def on_message(message):
         return
     if message.content == "!register":
         await register(message)
+    elif message.content == "!open":
+        await addroom(message)
+    elif message.content.startswith('!open'):
+        await addthread(message)
     elif message.channel.id == CH_QUESTIONNAIRE:
         await message.add_reaction(EMOJI_SANSEI)
         await message.add_reaction(EMOJI_HANTAI)
+    elif message.content == '!purge':
+        await purge(message)
 
 
 @client.event
