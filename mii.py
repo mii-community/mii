@@ -13,8 +13,8 @@ CH_STARTUP = int(os.getenv("CH_STARTUP", "678483492564107284"))
 CH_REGISTER = int(os.getenv("CH_REGISTER", "653111096747491328"))
 CH_JOIN = int(os.getenv("CH_JOIN", "653923742245978129"))
 CH_QUESTIONNAIRE = int(os.getenv("CH_QUESTIONNAIRE", "660392800399130633"))
-CH_ROOM = int(os.getenv("CH_ADDROOM", "702042912338346114"))
-CH_THREAD = int(os.getenv("CH_ADDTHREAD", "702030388033224714"))
+CH_ROOM = int(os.getenv("CH_ROOM", "702042912338346114"))
+CH_THREAD = int(os.getenv("CH_THREAD", "702030388033224714"))
 
 CAT_ROOM = int(os.getenv("CAT_ROOM", "702044270609170443"))
 CAT_THREAD = int(os.getenv("CAT_THREAD", "662856289151615025"))
@@ -37,7 +37,7 @@ async def register(message):
         1 for member in client.get_channel(CH_JOIN).members if not member.bot
     )
     await client.get_channel(CH_JOIN).send(
-        f"{message.author.name}が参加しました。\n現在の参加者数は{user_count}人です。"
+        f"{message.author.mention}が参加しました。"
     )
     dm = await message.author.create_dm()
     await dm.send(
@@ -60,11 +60,10 @@ async def add_room(message):
     new_channel = await client.get_channel(CAT_ROOM).create_text_channel(name=ch_name)
     channel = client.get_channel(new_channel.id)
     creator = channel.guild.get_member(message.author.id)
-    await channel.set_permissions(creator, manage_channels=True, manage_messages=True, manage_permissions=True)
+    await channel.set_permissions(creator, manage_messages=True)
     await message.channel.send(
         f"{message.author.mention} {new_channel.mention} を作成しました。"
     ) 
-
 
 
 async def open_thread(message):
