@@ -57,6 +57,12 @@ async def add_room(message):
         await message.channel.send("ここでは実行できません。")
         return
     ch_name = str(message.author.display_name + "の部屋")
+    ch_search = discord.utils.get(message.guild.channels, name=ch_name)
+    if ch_search.category.id == CAT_ROOM:
+        await message.channel.send(
+            f"{message.author.mention} {ch_search.mention} はもう作られています。"
+        ) 
+        return
     new_channel = await client.get_channel(CAT_ROOM).create_text_channel(name=ch_name)
     channel = client.get_channel(new_channel.id)
     creator = channel.guild.get_member(message.author.id)
@@ -74,7 +80,8 @@ async def open_thread(message):
     ch_name = str(name_search[6:])
     ch_search = discord.utils.get(message.guild.channels, name=ch_name)
     if not ch_search: 
-        new_channel = await client.get_channel(CAT_THREAD).create_text_channel(name=ch_name) 
+        new_channel = await client.get_channel(CAT_THREAD).create_text_channel(name=ch_name)
+        await new_channel.edit(topic="thread-author: " + str(message.author.id))
         await message.channel.send(
         f"{message.author.mention} {new_channel.mention} を作成しました。"
         )
@@ -88,19 +95,22 @@ async def open_thread(message):
         await ch_search.edit(category=client.get_channel(CAT_THREAD))
         role = discord.utils.get(message.guild.roles, name=REGISTER_ROLE_NAME)
         await ch_search.set_permissions(role, read_messages=True)
+        await ch_search.edit(topic="thread-author: " + str(message.author.id))
         await message.channel.send(
-            f"{message.author.mention} {ch_search.mention} をアーカイブから戻しました。"
+            f"{message.author.mention} {ch_search.mention} をアーカイブから戻しました。スレッドの作者は上書きされました。"
         ) 
+        return
 
 
 async def close_thread(message):
-    if not message.category.id == CAT_THREAD:
+    if not message.channel.category.id == CAT_THREAD:
         await message.channel.send("ここでは実行できません。")
         return
-    if message.author.guild_permissions.administrator:
+    if message.author.guild_permissions.administrator or message.channel.topic == "thread-author: " + str(message.author.id):
         role = discord.utils.get(message.guild.roles, name=REGISTER_ROLE_NAME)
         await message.channel.set_permissions(role, read_messages=False)
         await message.channel.edit(category=client.get_channel(CAT_ARCHIVE))
+        return
     else:
         await message.channel.send("権限がありません。") 
 
