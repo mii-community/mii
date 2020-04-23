@@ -169,12 +169,12 @@ async def on_message(message):
         await add_room(message)
     elif message.content.startswith("!open"):
         await open_thread(message)
-    elif message.channel.category.id == CAT_THREAD:
-        await age(message)
     elif message.content == "!close":
         await close_thread(message)
     elif message.content == "!purge":
         await purge(message)
+    elif message.channel.category.id == CAT_THREAD:
+        await age(message)
 
 
 @client.event
