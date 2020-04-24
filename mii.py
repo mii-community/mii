@@ -102,7 +102,8 @@ async def close_thread(message):
     if not message.channel.category.id == CAT_THREAD:
         await message.channel.send("ここでは実行できません。")
         return
-    if message.author.guild_permissions.administrator or message.channel.topic == "thread-author: " + str(message.author.id):
+    if (message.author.guild_permissions.administrator
+            or message.channel.topic == "thread-author: " + str(message.author.id)):
         role = discord.utils.get(message.guild.roles, name=REGISTER_ROLE_NAME)
         await message.channel.set_permissions(role, overwrite=None)
         role = discord.utils.get(message.guild.roles, name="view archive")
