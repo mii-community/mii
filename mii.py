@@ -12,8 +12,8 @@ TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 CH_STARTUP = int(os.getenv("CH_STARTUP", "678483492564107284"))
 CH_REGISTER = int(os.getenv("CH_REGISTER", "653111096747491328"))
 CH_JOIN = int(os.getenv("CH_JOIN", "653923742245978129"))
-CH_ROOM = int(os.getenv("CH_ROOM", "702042912338346114"))
-CH_THREAD = int(os.getenv("CH_THREAD", "702030388033224714"))
+CH_ROOM_MASTER = int(os.getenv("CH_ROOM_MASTER", "702042912338346114"))
+CH_THREAD_MASTER = int(os.getenv("CH_THREAD_MASTER", "702030388033224714"))
 
 CAT_ROOM = int(os.getenv("CAT_ROOM", "702044270609170443"))
 CAT_THREAD = int(os.getenv("CAT_THREAD", "662856289151615025"))
@@ -38,7 +38,7 @@ async def register(message):
 
 
 async def add_room(message):
-    if not message.channel.id == CH_ROOM:
+    if not message.channel.id == CH_ROOM_MASTER:
         await message.channel.send("ここでは実行できません。")
         return
     ch_name = str(message.author.display_name + "の部屋")
@@ -60,7 +60,7 @@ async def add_room(message):
 
 
 async def open_thread(message):
-    if not message.channel.id == CH_THREAD:
+    if not message.channel.id == CH_THREAD_MASTER:
         await message.channel.send("ここでは実行できません。")
         return
     name_search = message.content
@@ -80,7 +80,7 @@ async def open_thread(message):
         return
     elif matched.category.id == CAT_ARCHIVE:
         await matched.edit(category=client.get_channel(CAT_THREAD))
-        role = discord.utils.get(message.guild.roles, name="view archives")
+        role = discord.utils.get(message.guild.roles, name="view archive")
         await matched.set_permissions(role, overwrite=None)
         role = discord.utils.get(message.guild.roles, name=REGISTER_ROLE_NAME)
         await matched.set_permissions(role, read_messages=True)
@@ -92,9 +92,9 @@ async def open_thread(message):
 
 
 async def age(message):
-    if message.channel.id == CH_THREAD:
+    if message.channel.id == CH_THREAD_MASTER:
         return
-    position = client.get_channel(CH_THREAD).position + 1
+    position = client.get_channel(CH_THREAD_MASTER).position + 1
     await message.channel.edit(position=position)
 
 
@@ -105,7 +105,7 @@ async def close_thread(message):
     if message.author.guild_permissions.administrator or message.channel.topic == "thread-author: " + str(message.author.id):
         role = discord.utils.get(message.guild.roles, name=REGISTER_ROLE_NAME)
         await message.channel.set_permissions(role, overwrite=None)
-        role = discord.utils.get(message.guild.roles, name="view archives")
+        role = discord.utils.get(message.guild.roles, name="view archive")
         await message.channel.set_permissions(role, read_messages=True, send_messages=False)
         await message.channel.edit(category=client.get_channel(CAT_ARCHIVE))
         return
