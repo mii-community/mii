@@ -114,7 +114,7 @@ async def close_thread(message):
 
 
 async def pin(reaction_event):
-    channel = await client.fetch_channel(reaction_event.channel_id)
+    channel = client.get_channel(reaction_event.channel_id)
     message = await channel.fetch_message(reaction_event.message_id)
     if message.pinned:
         return
@@ -123,7 +123,7 @@ async def pin(reaction_event):
 
 
 async def unpin(reaction_event):
-    channel = await client.fetch_channel(reaction_event.channel_id)
+    channel = client.get_channel(reaction_event.channel_id)
     message = await channel.fetch_message(reaction_event.message_id)
     if not message.pinned:
         return
