@@ -50,14 +50,13 @@ async def add_room(message):
         await channel.set_permissions(creator, manage_messages=True)
         await message.channel.send(
             f"{message.author.mention} {new_channel.mention} を作成しました。"
-        ) 
+        )
         return
     elif matched.category.id == CAT_ROOM:
         await message.channel.send(
             f"{message.author.mention} {matched.mention} はもう作られています。"
-        ) 
+        )
         return
-    
 
 
 async def open_thread(message):
@@ -67,17 +66,17 @@ async def open_thread(message):
     name_search = message.content
     ch_name = str(name_search[6:])
     matched = discord.utils.get(message.guild.channels, name=ch_name)
-    if not matched: 
+    if not matched:
         new_channel = await client.get_channel(CAT_THREAD).create_text_channel(name=ch_name)
         await new_channel.edit(topic="thread-author: " + str(message.author.id))
         await message.channel.send(
-        f"{message.author.mention} {new_channel.mention} を作成しました。"
+            f"{message.author.mention} {new_channel.mention} を作成しました。"
         )
         return
     elif matched.category.id == CAT_THREAD:
         await message.channel.send(
             f"{message.author.mention} {matched.mention} はもう作られています。"
-        ) 
+        )
         return
     elif matched.category.id == CAT_ARCHIVE:
         await matched.edit(category=client.get_channel(CAT_THREAD))
@@ -86,7 +85,7 @@ async def open_thread(message):
         await matched.edit(topic="thread-author: " + str(message.author.id))
         await message.channel.send(
             f"{message.author.mention} {matched.mention} をアーカイブから戻しました。スレッドの作者は上書きされました。"
-        ) 
+        )
         return
 
 
@@ -107,7 +106,7 @@ async def close_thread(message):
         await message.channel.edit(category=client.get_channel(CAT_ARCHIVE))
         return
     else:
-        await message.channel.send("権限がありません。") 
+        await message.channel.send("権限がありません。")
 
 
 async def pin(reaction_event):
@@ -124,7 +123,8 @@ async def unpin(reaction_event):
     message = await channel.fetch_message(reaction_event.message_id)
     if not message.pinned:
         return
-    reaction = discord.utils.get(message.reactions, emoji=reaction_event.emoji.name)
+    reaction = discord.utils.get(
+        message.reactions, emoji=reaction_event.emoji.name)
     if reaction:
         return
     await message.unpin()
