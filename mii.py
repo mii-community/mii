@@ -80,6 +80,8 @@ async def open_thread(message):
         return
     elif matched.category.id == CAT_ARCHIVE:
         await matched.edit(category=client.get_channel(CAT_THREAD))
+        role = discord.utils.get(message.guild.roles, name="view archives")
+        await matched.set_permissions(role, overwrite=None)
         role = discord.utils.get(message.guild.roles, name=REGISTER_ROLE_NAME)
         await matched.set_permissions(role, read_messages=True)
         await matched.edit(topic="thread-author: " + str(message.author.id))
@@ -102,7 +104,9 @@ async def close_thread(message):
         return
     if message.author.guild_permissions.administrator or message.channel.topic == "thread-author: " + str(message.author.id):
         role = discord.utils.get(message.guild.roles, name=REGISTER_ROLE_NAME)
-        await message.channel.set_permissions(role, read_messages=False)
+        await message.channel.set_permissions(role, overwrite=None)
+        role = discord.utils.get(message.guild.roles, name="view archives")
+        await message.channel.set_permissions(role, read_messages=True)
         await message.channel.edit(category=client.get_channel(CAT_ARCHIVE))
         return
     else:
