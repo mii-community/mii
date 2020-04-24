@@ -106,7 +106,7 @@ async def close_thread(message):
         role = discord.utils.get(message.guild.roles, name=REGISTER_ROLE_NAME)
         await message.channel.set_permissions(role, overwrite=None)
         role = discord.utils.get(message.guild.roles, name="view archives")
-        await message.channel.set_permissions(role, read_messages=True)
+        await message.channel.set_permissions(role, read_messages=True, send_messages=False)
         await message.channel.edit(category=client.get_channel(CAT_ARCHIVE))
         return
     else:
