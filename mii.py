@@ -20,7 +20,7 @@ CAT_THREAD = int(os.getenv("CAT_THREAD", "662856289151615025"))
 CAT_ARCHIVE = int(os.getenv("CAT_ARCHIVE", "702074011772911656"))
 
 MEMBER_ROLE_NAME = os.getenv("MEMBER_ROLE_NAME", "member")
-
+ARCHIVE_ROLE_NAME = os.getenv("ARCHIVE_ROLE_NAME", "view archive")
 
 # functions
 async def register(message):
@@ -80,7 +80,7 @@ async def open_thread(message):
         return
     elif matched.category.id == CAT_ARCHIVE:
         await matched.edit(category=client.get_channel(CAT_THREAD))
-        role = discord.utils.get(message.guild.roles, name="view archive")
+        role = discord.utils.get(message.guild.roles, name=ARCHIVE_ROLE_NAME)
         await matched.set_permissions(role, overwrite=None)
         role = discord.utils.get(message.guild.roles, name=MEMBER_ROLE_NAME)
         await matched.set_permissions(role, read_messages=True)
@@ -106,7 +106,7 @@ async def close_thread(message):
             or message.channel.topic == "thread-author: " + str(message.author.id)):
         role = discord.utils.get(message.guild.roles, name=MEMBER_ROLE_NAME)
         await message.channel.set_permissions(role, overwrite=None)
-        role = discord.utils.get(message.guild.roles, name="view archive")
+        role = discord.utils.get(message.guild.roles, name=ARCHIVE_ROLE_NAME)
         await message.channel.set_permissions(role, read_messages=True, send_messages=False)
         await message.channel.edit(category=client.get_channel(CAT_ARCHIVE))
         return
