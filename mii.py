@@ -19,7 +19,7 @@ CAT_ROOM = int(os.getenv("CAT_ROOM", "702044270609170443"))
 CAT_THREAD = int(os.getenv("CAT_THREAD", "662856289151615025"))
 CAT_ARCHIVE = int(os.getenv("CAT_ARCHIVE", "702074011772911656"))
 
-REGISTER_ROLE_NAME = os.getenv("REGISTER_ROLE_NAME", "member")
+MEMBER_ROLE_NAME = os.getenv("MEMBER_ROLE_NAME", "member")
 
 
 # functions
@@ -27,7 +27,7 @@ async def register(message):
     if not message.channel.id == CH_REGISTER:
         await message.channel.send("ここでは実行できません。")
         return
-    role = discord.utils.get(message.guild.roles, name=REGISTER_ROLE_NAME)
+    role = discord.utils.get(message.guild.roles, name=MEMBER_ROLE_NAME)
     await message.author.add_roles(role)
     user_count = sum(
         1 for member in client.get_channel(CH_JOIN).members if not member.bot
@@ -82,7 +82,7 @@ async def open_thread(message):
         await matched.edit(category=client.get_channel(CAT_THREAD))
         role = discord.utils.get(message.guild.roles, name="view archive")
         await matched.set_permissions(role, overwrite=None)
-        role = discord.utils.get(message.guild.roles, name=REGISTER_ROLE_NAME)
+        role = discord.utils.get(message.guild.roles, name=MEMBER_ROLE_NAME)
         await matched.set_permissions(role, read_messages=True)
         await matched.edit(topic="thread-author: " + str(message.author.id))
         await message.channel.send(
@@ -104,7 +104,7 @@ async def close_thread(message):
         return
     if (message.author.guild_permissions.administrator
             or message.channel.topic == "thread-author: " + str(message.author.id)):
-        role = discord.utils.get(message.guild.roles, name=REGISTER_ROLE_NAME)
+        role = discord.utils.get(message.guild.roles, name=MEMBER_ROLE_NAME)
         await message.channel.set_permissions(role, overwrite=None)
         role = discord.utils.get(message.guild.roles, name="view archive")
         await message.channel.set_permissions(role, read_messages=True, send_messages=False)
