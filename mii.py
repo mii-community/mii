@@ -3,26 +3,32 @@ import os
 import discord
 import dotenv
 
+from discord import Message
+
 dotenv.load_dotenv()
 
 client = discord.Client()
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 
 # consts
-CH_STARTUP = int(os.getenv("CH_STARTUP", "678483492564107284"))
-CH_REGISTER = int(os.getenv("CH_REGISTER", "653111096747491328"))
-CH_JOIN = int(os.getenv("CH_JOIN", "653923742245978129"))
-CH_ROOM_MASTER = int(os.getenv("CH_ROOM_MASTER", "702042912338346114"))
-CH_THREAD_MASTER = int(os.getenv("CH_THREAD_MASTER", "702030388033224714"))
+CH_STARTUP = int(os.getenv("CH_STARTUP",         "678483492564107284"))
+CH_REGISTER = int(os.getenv("CH_REGISTER",        "653111096747491328"))
+CH_JOIN = int(os.getenv("CH_JOIN",            "653923742245978129"))
+CH_ROOM_MASTER = int(os.getenv("CH_ROOM_MASTER",     "702042912338346114"))
+CH_THREAD_MASTER = int(os.getenv("CH_THREAD_MASTER",   "702030388033224714"))
+CH_VOICE = int(os.getenv("CH_VOICE",           "655319117691355166"))
+CH_VOICE_TEXT = int(os.getenv("CH_VOICE_TEXT",      "655319030428598303"))
 
-CAT_ROOM = int(os.getenv("CAT_ROOM", "702044270609170443"))
-CAT_THREAD = int(os.getenv("CAT_THREAD", "662856289151615025"))
-CAT_ARCHIVE = int(os.getenv("CAT_ARCHIVE", "702074011772911656"))
+CAT_ROOM = int(os.getenv("CAT_ROOM",           "702044270609170443"))
+CAT_THREAD = int(os.getenv("CAT_THREAD",         "662856289151615025"))
+CAT_ARCHIVE = int(os.getenv("CAT_ARCHIVE",        "702074011772911656"))
 
-MEMBER_ROLE_NAME = os.getenv("MEMBER_ROLE_NAME", "member")
-ARCHIVE_ROLE_NAME = os.getenv("ARCHIVE_ROLE_NAME", "view archive")
+MEMBER_ROLE_NAME = str(os.getenv("MEMBER_ROLE_NAME",   "member"))
+ARCHIVE_ROLE_NAME = str(os.getenv("ARCHIVE_ROLE_NAME",  "view archive"))
 
 # functions
+
+
 async def register(message):
     if not message.channel.id == CH_REGISTER:
         await message.channel.send("ここでは実行できません。")
@@ -149,6 +155,34 @@ async def purge(message):
         await message.channel.send("権限がありません。")
 
 
+async def vc_rename(message):
+    if message.channel.id != CH_VOICE_TEXT:
+        await message.channel.send(f"{message.author.mention} ここでは実行できません。")
+        return
+    state = message.author.voice
+    if not state:
+        await message.channel.send(f"{message.author.mention} VCに参加していないため実行できません。")
+        return
+    if state.channel.id != CH_VOICE:
+        await message.channel.send(f"{message.author.mention} AFKチャンネルに接続中は実行できません。")
+        return
+    name = message.content
+    named = str(name[4:])
+    channel = client.get_channel(CH_VOICE)
+    await channel.edit(name=named)
+    channel = client.get_channel(CH_VOICE_TEXT)
+    await channel.edit(name=named + "-text")
+    await message.channel.send(f"{message.author.mention} チャンネル名を {named} に上書きしました。")
+
+
+async def vc_reset():
+    channel = client.get_channel(CH_VOICE)
+    await channel.edit(name="vc")
+    channel = client.get_channel(CH_VOICE_TEXT)
+    await channel.edit(name="vc-text")
+    await channel.send(f"接続人数が0になったのでチャンネル名をリセットしました。")
+
+
 def is_bot(user):
     return user.bot
 
@@ -166,6 +200,8 @@ async def on_message(message):
         return
     if message.content == "!register":
         await register(message)
+    elif message.content.startswith("!vc"):
+        await vc_rename(message)
     elif message.content == "!open":
         await add_room(message)
     elif message.content.startswith("!open"):
@@ -191,5 +227,14 @@ async def on_raw_reaction_remove(reaction_event):
     if reaction_event.emoji.name == "\N{PUSHPIN}":
         await unpin(reaction_event)
 
+
+@client.event
+async def on_voice_state_update(member, before, after):
+    if not before.channel:
+        return
+    elif (before.channel.id != CH_VOICE or len(before.channel.members) != 0):
+        return
+    elif len(before.channel.members) == 0:
+        await vc_reset()
 
 client.run(TOKEN)
