@@ -230,9 +230,11 @@ async def on_raw_reaction_remove(reaction_event):
 async def on_voice_state_update(member, before, after):
     if not before.channel:
         return
-    elif (before.channel.id != CH_VOICE or len(before.channel.members) != 0):
+    elif (before.channel.id != CH_VOICE
+            or len(before.channel.members) != 0):
         return
-    elif len(before.channel.members) == 0:
+    elif (len(before.channel.members) == 0
+            and before.channel.name != "vc"):
         await vc_reset()
 
 client.run(TOKEN)
