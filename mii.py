@@ -170,7 +170,11 @@ async def vc_reset():
     await channel.edit(name="vc")
     channel = client.get_channel(CH_VOICE_TEXT)
     await channel.edit(name="vc-text")
-    await channel.send(f"接続人数が0になったのでチャンネル名をリセットしました。")
+    embed = discord.Embed(
+        description= f"接続人数が0になったのでチャンネル名をリセットしました。",
+        colour=0x000000
+    )
+    await channel.send(embed=embed, delete_after=60)
 
 
 async def pin(reaction_event):
