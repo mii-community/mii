@@ -53,8 +53,8 @@ async def add_room(message):
                 f"{message.author.mention} {channel.mention} あなたの部屋はもう作られています。"
             )
             return
-    ch_name = message.author.display_name + "の部屋"
-    new_channel = await category.create_text_channel(name=ch_name)
+    named = message.author.display_name + "の部屋"
+    new_channel = await category.create_text_channel(name=named)
     creator = new_channel.guild.get_member(message.author.id)
     await new_channel.edit(topic="room-author: " + str(message.author.id))
     await channel.set_permissions(creator, manage_messages=True)
@@ -68,10 +68,10 @@ async def open_thread(message):
         await message.channel.send("ここでは実行できません。")
         return
     name_search = message.content
-    ch_name = str(name_search[6:])
-    matched = discord.utils.get(message.guild.channels, name=ch_name)
+    named = str(name_search[6:])
+    matched = discord.utils.get(message.guild.channels, name=named)
     if not matched:
-        new_channel = await client.get_channel(CAT_THREAD).create_text_channel(name=ch_name)
+        new_channel = await client.get_channel(CAT_THREAD).create_text_channel(name=named)
         await new_channel.edit(topic="thread-author: " + str(message.author.id))
         await message.channel.send(
             f"{message.author.mention} {new_channel.mention} を作成しました。"
