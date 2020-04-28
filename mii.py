@@ -92,7 +92,7 @@ async def open_thread(message):
         )
 
 
-async def age(message):
+async def age_thread(message):
     if message.channel.id == CH_THREAD_MASTER:
         return
     position = client.get_channel(CH_THREAD_MASTER).position + 1
@@ -114,7 +114,7 @@ async def close_thread(message):
         await message.channel.send("権限がありません。")
 
 
-async def ch_rename(message):
+async def rename_ch(message):
     if (message.channel.category.id != CAT_ROOM
             and message.channel.category.id != CAT_THREAD):
         await message.channel.send("ここでは実行できません。")
@@ -129,7 +129,7 @@ async def ch_rename(message):
     await message.channel.send(f"{message.author.mention} チャンネル名を {named} に上書きしました。")
 
 
-async def vc_rename(message):
+async def rename_vc(message):
     if message.channel.id != CH_VOICE_TEXT:
         await message.channel.send(f"{message.author.mention} ここでは実行できません。")
         return
@@ -149,7 +149,7 @@ async def vc_rename(message):
     await message.channel.send(f"{message.author.mention} チャンネル名を {named} に上書きしました。")
 
 
-async def vc_in(member):
+async def notify_joined_vc(member):
     embed = discord.Embed(
         description=f"{member.display_name}が入室しました。",
         colour=0x000000
@@ -157,7 +157,7 @@ async def vc_in(member):
     await client.get_channel(CH_VOICE_TEXT).send(embed=embed, delete_after=60)
 
 
-async def vc_out(member):
+async def notify_left_vc(member):
     embed = discord.Embed(
         description=f"{member.display_name}が退室しました。",
         colour=0x000000
@@ -165,13 +165,13 @@ async def vc_out(member):
     await client.get_channel(CH_VOICE_TEXT).send(embed=embed, delete_after=60)
 
 
-async def vc_reset():
+async def reset_vc_name():
     channel = client.get_channel(CH_VOICE)
     await channel.edit(name="vc")
     channel = client.get_channel(CH_VOICE_TEXT)
     await channel.edit(name="vc-text")
     embed = discord.Embed(
-        description= f"接続人数が0になったのでチャンネル名をリセットしました。",
+        description=f"接続人数が0になったのでチャンネル名をリセットしました。",
         colour=0x000000
     )
     await channel.send(embed=embed, delete_after=60)
@@ -227,7 +227,7 @@ async def on_message(message):
     if message.content == "!register":
         await register(message)
     elif message.content.startswith("!vc "):
-        await vc_rename(message)
+        await rename_vc(message)
     elif message.content == "!open":
         await add_room(message)
     elif message.content.startswith("!open "):
@@ -235,11 +235,11 @@ async def on_message(message):
     elif message.content == "!close":
         await close_thread(message)
     elif message.content.startswith("!rename "):
-        await ch_rename(message)
+        await rename_ch(message)
     elif message.content == "!purge":
         await purge(message)
     elif message.channel.category.id == CAT_THREAD:
-        await age(message)
+        await age_thread(message)
 
 
 @client.event
@@ -264,15 +264,15 @@ async def on_voice_state_update(member, before, after):
         if after.channel.id != CH_VOICE:
             return
         elif len(after.channel.members) >= 5:
-            await vc_in(member)
+            await notify_joined_vc(member)
     elif before.channel:
         if before.channel.id != CH_VOICE:
             return
         elif len(before.channel.members) >= 4:
-            await vc_out(member)
+            await notify_left_vc(member)
         elif (len(before.channel.members) == 0
                 and before.channel.name != "vc"):
-            await vc_reset()
+            await reset_vc_name()
 
 
 client.run(TOKEN)
