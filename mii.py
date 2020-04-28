@@ -256,12 +256,12 @@ async def on_raw_reaction_remove(reaction_event):
 async def on_voice_state_update(member, before, after):
     if before.channel == after.channel:
         return
-    if not before.channel:
+    if after.channel:
         if after.channel.id != CH_VOICE:
             return
         elif len(after.channel.members) >= 5:
             await vc_in(member)
-    elif not after.channel:
+    elif before.channel:
         if before.channel.id != CH_VOICE:
             return
         elif len(before.channel.members) >= 4:
@@ -269,3 +269,6 @@ async def on_voice_state_update(member, before, after):
         elif (len(before.channel.members) == 0
                 and before.channel.name != "vc"):
             await vc_reset()
+
+
+client.run(TOKEN)
