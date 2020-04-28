@@ -53,7 +53,7 @@ async def add_room(message):
                 f"{message.author.mention} {channel.mention} あなたの部屋はもう作られています。"
             )
             return
-    ch_name = str(message.author.display_name + "の部屋")
+    ch_name = message.author.display_name + "の部屋"
     new_channel = await category.create_text_channel(name=ch_name)
     creator = new_channel.guild.get_member(message.author.id)
     await new_channel.edit(topic="room-author: " + str(message.author.id))
@@ -267,7 +267,7 @@ async def on_voice_state_update(member, before, after):
     elif not after.channel:
         if before.channel.id != CH_VOICE:
             return
-        elif len(before.channel.members) >= 5:
+        elif len(before.channel.members) >= 4:
             await vc_out(member)
             return
         elif (len(before.channel.members) == 0
