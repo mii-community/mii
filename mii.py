@@ -27,8 +27,12 @@ ARCHIVE_ROLE_NAME = str(os.getenv("ARCHIVE_ROLE_NAME", "view archive"))
 
 
 # functions
+def is_bot(user):
+    return user.bot
+
+
 async def register(message):
-    if not message.channel.id == CH_REGISTER:
+    if message.channel.id != CH_REGISTER:
         await message.channel.send("ここでは実行できません。")
         return
     role = discord.utils.get(message.guild.roles, name=MEMBER_ROLE_NAME)
@@ -39,7 +43,7 @@ async def register(message):
 
 
 async def add_room(message):
-    if not message.channel.id == CH_ROOM_MASTER:
+    if message.channel.id != CH_ROOM_MASTER:
         await message.channel.send("ここでは実行できません。")
         return
     category = client.get_channel(CAT_ROOM)
@@ -60,7 +64,7 @@ async def add_room(message):
 
 
 async def open_thread(message):
-    if not message.channel.id == CH_THREAD_MASTER:
+    if message.channel.id != CH_THREAD_MASTER:
         await message.channel.send("ここでは実行できません。")
         return
     name_search = message.content
@@ -99,7 +103,7 @@ async def age(message):
 
 
 async def close_thread(message):
-    if not message.channel.category.id == CAT_THREAD:
+    if message.channel.category.id != CAT_THREAD:
         await message.channel.send("ここでは実行できません。")
         return
     if (message.author.guild_permissions.administrator
@@ -114,39 +118,19 @@ async def close_thread(message):
         await message.channel.send("権限がありません。")
 
 
-async def pin(reaction_event):
-    channel = client.get_channel(reaction_event.channel_id)
-    message = await channel.fetch_message(reaction_event.message_id)
-    if message.pinned:
+async def ch_rename(message):
+    if (message.channel.category.id != CAT_ROOM
+            and message.channel.category.id != CAT_THREAD):
+        await message.channel.send("ここでは実行できません。")
         return
-    await message.pin()
-    await channel.send(f"{reaction_event.member.display_name}がピン留めしました。")
-
-
-async def unpin(reaction_event):
-    channel = client.get_channel(reaction_event.channel_id)
-    message = await channel.fetch_message(reaction_event.message_id)
-    if not message.pinned:
-        return
-    reaction = discord.utils.get(
-        message.reactions, emoji=reaction_event.emoji.name)
-    if reaction:
-        return
-    await message.unpin()
-    embed = discord.Embed(
-        title=f"送信者:{message.author.display_name}",
-        description=f"メッセージ内容:{message.content}",
-        color=0xFF0000,
-    )
-    await channel.send("リアクションがゼロになったため、ピン留めが解除されました。", embed=embed)
-
-
-async def purge(message):
-    if message.author.guild_permissions.administrator:
-        await message.channel.purge()
-        await message.channel.send("✅")
-    else:
+    elif (message.channel.topic != "room-author: " + str(message.author.id)
+            and message.channel.topic != "thread-author: " + str(message.author.id)):
         await message.channel.send("権限がありません。")
+        return
+    name = message.content
+    named = str(name[8:])
+    await message.channel.edit(name=named)
+    await message.channel.send(f"{message.author.mention} チャンネル名を {named} に上書きしました。")
 
 
 async def vc_rename(message):
@@ -193,8 +177,39 @@ async def vc_reset():
     await channel.send(f"接続人数が0になったのでチャンネル名をリセットしました。")
 
 
-def is_bot(user):
-    return user.bot
+async def pin(reaction_event):
+    channel = client.get_channel(reaction_event.channel_id)
+    message = await channel.fetch_message(reaction_event.message_id)
+    if message.pinned:
+        return
+    await message.pin()
+    await channel.send(f"{reaction_event.member.display_name}がピン留めしました。")
+
+
+async def unpin(reaction_event):
+    channel = client.get_channel(reaction_event.channel_id)
+    message = await channel.fetch_message(reaction_event.message_id)
+    if not message.pinned:
+        return
+    reaction = discord.utils.get(
+        message.reactions, emoji=reaction_event.emoji.name)
+    if reaction:
+        return
+    await message.unpin()
+    embed = discord.Embed(
+        title=f"送信者:{message.author.display_name}",
+        description=f"メッセージ内容:{message.content}",
+        color=0xFF0000,
+    )
+    await channel.send("リアクションがゼロになったため、ピン留めが解除されました。", embed=embed)
+
+
+async def purge(message):
+    if message.author.guild_permissions.administrator:
+        await message.channel.purge()
+        await message.channel.send("✅")
+    else:
+        await message.channel.send("権限がありません。")
 
 
 # events
@@ -218,6 +233,8 @@ async def on_message(message):
         await open_thread(message)
     elif message.content == "!close":
         await close_thread(message)
+    elif message.content.startswith("!rename "):
+        await ch_rename(message)
     elif message.content == "!purge":
         await purge(message)
     elif message.channel.category.id == CAT_THREAD:
