@@ -256,25 +256,16 @@ async def on_raw_reaction_remove(reaction_event):
 async def on_voice_state_update(member, before, after):
     if before.channel == after.channel:
         return
-    elif not before.channel:
+    if not before.channel:
         if after.channel.id != CH_VOICE:
-            pass
+            return
         elif len(after.channel.members) >= 5:
             await vc_in(member)
     elif not after.channel:
         if before.channel.id != CH_VOICE:
-            pass
+            return
         elif len(before.channel.members) >= 4:
             await vc_out(member)
         elif (len(before.channel.members) == 0
                 and before.channel.name != "vc"):
             await vc_reset()
-
-client.run(TOKEN)
-
-"""
-2020-04-28T10:11:29.162634+00:00 app[bot.1]:   File "mii.py", line 260
-2020-04-28T10:11:29.162653+00:00 app[bot.1]:     elif len(after.channel.members) >= 5:
-2020-04-28T10:11:29.162660+00:00 app[bot.1]:     ^
-2020-04-28T10:11:29.162660+00:00 app[bot.1]: IndentationError: expected an indented block
-"""
