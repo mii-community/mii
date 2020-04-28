@@ -67,8 +67,8 @@ async def open_thread(message):
     if message.channel.id != CH_THREAD_MASTER:
         await message.channel.send("ここでは実行できません。")
         return
-    name_search = message.content
-    named = str(name_search[6:])
+    name = message.content
+    named = str(name[6:])
     matched = discord.utils.get(message.guild.channels, name=named)
     if not matched:
         new_channel = await client.get_channel(CAT_THREAD).create_text_channel(name=named)
