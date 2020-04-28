@@ -198,11 +198,11 @@ async def on_message(message):
         return
     if message.content == "!register":
         await register(message)
-    elif message.content.startswith("!vc"):
+    elif message.content.startswith("!vc "):
         await vc_rename(message)
     elif message.content == "!open":
         await add_room(message)
-    elif message.content.startswith("!open"):
+    elif message.content.startswith("!open "):
         await open_thread(message)
     elif message.content == "!close":
         await close_thread(message)
