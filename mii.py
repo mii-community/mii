@@ -33,9 +33,6 @@ async def register(message):
         return
     role = discord.utils.get(message.guild.roles, name=MEMBER_ROLE_NAME)
     await message.author.add_roles(role)
-    user_count = sum(
-        1 for member in client.get_channel(CH_JOIN).members if not member.bot
-    )
     await client.get_channel(CH_JOIN).send(
         f"{message.author.mention}が参加しました。"
     )
