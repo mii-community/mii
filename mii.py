@@ -76,12 +76,10 @@ async def open_thread(message):
         await message.channel.send(
             f"{message.author.mention} {new_channel.mention} を作成しました。"
         )
-        return
     elif matched.category.id == CAT_THREAD:
         await message.channel.send(
             f"{message.author.mention} {matched.mention} はもう作られています。"
         )
-        return
     elif matched.category.id == CAT_ARCHIVE:
         await matched.edit(category=client.get_channel(CAT_THREAD))
         role = discord.utils.get(message.guild.roles, name=ARCHIVE_ROLE_NAME)
@@ -92,7 +90,6 @@ async def open_thread(message):
         await message.channel.send(
             f"{message.author.mention} {matched.mention} をアーカイブから戻しました。スレッドの作者は上書きされました。"
         )
-        return
 
 
 async def age(message):
@@ -113,7 +110,6 @@ async def close_thread(message):
         role = discord.utils.get(message.guild.roles, name=ARCHIVE_ROLE_NAME)
         await message.channel.set_permissions(role, read_messages=True, send_messages=False)
         await message.channel.edit(category=client.get_channel(CAT_ARCHIVE))
-        return
     else:
         await message.channel.send("権限がありません。")
 
@@ -261,15 +257,12 @@ async def on_voice_state_update(member, before, after):
         return
     elif not before.channel:
         if after.channel.id != CH_VOICE:
-            return
         elif len(after.channel.members) >= 5:
             await vc_in(member)
     elif not after.channel:
         if before.channel.id != CH_VOICE:
-            return
         elif len(before.channel.members) >= 4:
             await vc_out(member)
-            return
         elif (len(before.channel.members) == 0
                 and before.channel.name != "vc"):
             await vc_reset()
