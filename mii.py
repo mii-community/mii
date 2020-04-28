@@ -57,7 +57,7 @@ async def add_room(message):
     new_channel = await category.create_text_channel(name=named)
     creator = new_channel.guild.get_member(message.author.id)
     await new_channel.edit(topic="room-author: " + str(message.author.id))
-    await channel.set_permissions(creator, manage_messages=True)
+    await new_channel.set_permissions(creator, manage_messages=True)
     await message.channel.send(
         f"{message.author.mention} {new_channel.mention} を作成しました。"
     )
