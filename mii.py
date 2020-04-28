@@ -178,7 +178,7 @@ async def vc_in(member):
         description=f"{member.display_name}が入室しました。",
         colour=0x000000
     )
-    await client.get_channel(CH_VOICE_TEXT).send(embed=embed, delete_after=30)
+    await client.get_channel(CH_VOICE_TEXT).send(embed=embed, delete_after=60)
 
 
 async def vc_out(member):
@@ -186,7 +186,7 @@ async def vc_out(member):
         description=f"{member.display_name}が退室しました。",
         colour=0x000000
     )
-    await client.get_channel(CH_VOICE_TEXT).send(embed=embed, delete_after=30)
+    await client.get_channel(CH_VOICE_TEXT).send(embed=embed, delete_after=60)
 
 
 async def vc_reset():
@@ -251,7 +251,6 @@ async def on_voice_state_update(member, before, after):
             return
         elif len(after.channel.members) >= 5:
             await vc_in(member)
-            return
     elif not after.channel:
         if before.channel.id != CH_VOICE:
             return
