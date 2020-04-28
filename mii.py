@@ -124,7 +124,7 @@ async def pin(reaction_event):
     if message.pinned:
         return
     await message.pin()
-    await channel.send(f"{reaction_event.member.name}がピン留めしました。")
+    await channel.send(f"{reaction_event.member.display_name}がピン留めしました。")
 
 
 async def unpin(reaction_event):
@@ -138,7 +138,7 @@ async def unpin(reaction_event):
         return
     await message.unpin()
     embed = discord.Embed(
-        title=f"送信者:{message.author}",
+        title=f"送信者:{message.author.display_name}",
         description=f"メッセージ内容:{message.content}",
         color=0xFF0000,
     )
@@ -171,6 +171,22 @@ async def vc_rename(message):
     channel = client.get_channel(CH_VOICE_TEXT)
     await channel.edit(name=named + "-text")
     await message.channel.send(f"{message.author.mention} チャンネル名を {named} に上書きしました。")
+
+
+async def vc_in(member):
+    embed = discord.Embed(
+        description=f"{member.display_name}が入室しました。",
+        colour=0x000000
+    )
+    await client.get_channel(CH_VOICE_TEXT).send(embed=embed, delete_after=30)
+
+
+async def vc_out(member):
+    embed = discord.Embed(
+        description=f"{member.display_name}が退室しました。",
+        colour=0x000000
+    )
+    await client.get_channel(CH_VOICE_TEXT).send(embed=embed, delete_after=30)
 
 
 async def vc_reset():
@@ -228,13 +244,22 @@ async def on_raw_reaction_remove(reaction_event):
 
 @client.event
 async def on_voice_state_update(member, before, after):
-    if not before.channel:
+    if before.channel == after.channel:
         return
-    elif (before.channel.id != CH_VOICE
-            or len(before.channel.members) != 0):
-        return
-    elif (len(before.channel.members) == 0
-            and before.channel.name != "vc"):
-        await vc_reset()
+    elif not before.channel:
+        if after.channel.id != CH_VOICE:
+            return
+        elif len(after.channel.members) >= 5:
+            await vc_in(member)
+            return
+    elif not after.channel:
+        if before.channel.id != CH_VOICE:
+            return
+        elif len(before.channel.members) >= 5:
+            await vc_out(member)
+            return
+        elif (len(before.channel.members) == 0
+                and before.channel.name != "vc"):
+            await vc_reset()
 
 client.run(TOKEN)
