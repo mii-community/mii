@@ -42,22 +42,21 @@ async def add_room(message):
     if not message.channel.id == CH_ROOM_MASTER:
         await message.channel.send("ここでは実行できません。")
         return
+    category = client.get_channel(CAT_ROOM)
+    for channel in category.channels:
+        if channel.topic == "room-author: " + str(message.author.id):
+            await message.channel.send(
+                f"{message.author.mention} {channel.mention} あなたの部屋はもう作られています。"
+            )
+            return
     ch_name = str(message.author.display_name + "の部屋")
-    matched = discord.utils.get(message.guild.channels, name=ch_name)
-    if not matched:
-        new_channel = await client.get_channel(CAT_ROOM).create_text_channel(name=ch_name)
-        channel = client.get_channel(new_channel.id)
-        creator = channel.guild.get_member(message.author.id)
-        await channel.set_permissions(creator, manage_messages=True)
-        await message.channel.send(
-            f"{message.author.mention} {new_channel.mention} を作成しました。"
-        )
-        return
-    elif matched.category.id == CAT_ROOM:
-        await message.channel.send(
-            f"{message.author.mention} {matched.mention} はもう作られています。"
-        )
-        return
+    new_channel = await category.create_text_channel(name=ch_name)
+    creator = new_channel.guild.get_member(message.author.id)
+    await new_channel.edit(topic="room-author: " + str(message.author.id))
+    await channel.set_permissions(creator, manage_messages=True)
+    await message.channel.send(
+        f"{message.author.mention} {new_channel.mention} を作成しました。"
+    )
 
 
 async def open_thread(message):
