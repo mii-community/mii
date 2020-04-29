@@ -25,6 +25,24 @@ CAT_ARCHIVE = int(os.getenv("CAT_ARCHIVE", "702074011772911656"))
 MEMBER_ROLE_NAME = str(os.getenv("MEMBER_ROLE_NAME", "member"))
 ARCHIVE_ROLE_NAME = str(os.getenv("ARCHIVE_ROLE_NAME", "view archive"))
 
+hiragana = {
+    "あ": "99_aa", "い": "98_ii", "う": "97_uu", "え": "96_ee", "お": "95_oo",
+    "か": "94_ka", "き": "93_ki", "く": "92_ku", "け": "91_ke", "こ": "90_ko",
+    "さ": "89_sa", "し": "88_si", "す": "87_su", "せ": "86_se", "そ": "85_so",
+    "た": "84_ta", "ち": "83_ti", "つ": "82_tu", "て": "81_te", "と": "80_to",
+    "な": "79_na", "に": "78_ni", "ぬ": "77_nu", "ね": "76_ne", "の": "75_no",
+    "は": "74_ha", "ひ": "73_hi", "ふ": "72_hu", "へ": "71_he", "ほ": "70_ho",
+    "ま": "69_ma", "み": "68_mi", "む": "67_mu", "め": "66_me", "も": "65_mo",
+    "や": "64_ya", "ゆ": "63_yu", "よ": "62_yo",
+    "ら": "61_ra", "り": "60_ri", "る": "59_ru", "れ": "58_re", "ろ": "57_ro",
+    "わ": "56_wa", "を": "55_wo",
+    "ん": "54_nn",
+    "ぁ": "53_la", "ぃ": "52_li", "ぅ": "51_lu", "ぇ": "50_le", "ぉ": "49_lo",
+    "っ": "48_ltu",
+    "ゃ": "47_lya", "ゅ": "46_lyu", "ょ": "45_lyo",
+    "〜": "44_nobasi", "！": "43_exclamation", "？": "42_question"
+}
+
 
 # functions
 def is_bot(user):
@@ -177,6 +195,36 @@ async def reset_vc_name():
     await channel.send(embed=embed, delete_after=60)
 
 
+async def check_webhook(message):
+    webhooks = await message.channel.webhooks()
+    if not webhooks:
+        webhook = await message.channel.create_webhook(name="mii")
+        return webhook
+    for webhook in webhooks:
+        if webhook.name == "mii":
+            return webhook
+    webhook = await message.channel.create_webhook(name="mii")
+    return webhook
+
+
+async def replace_emoji(message):
+    webhook = await check_webhook(message)
+    replaces = []
+    string = str(message.content[7:])
+    for char in string:
+        if not char in hiragana:
+            await message.channel.send("対応していない文字が含まれています。")
+            return
+        emoji_alias = hiragana[char]
+        get_emoji = discord.utils.get(message.guild.emojis, name=emoji_alias)
+        emoji_id = get_emoji.id
+        replace = "<:" + emoji_alias + ":" + str(emoji_id) + ">"
+        replaces.append(replace)
+    replaced = " ".join(replaces)
+    await message.delete()
+    await webhook.send(avatar_url=message.author.avatar_url, username=message.author.display_name, content=replaced)
+
+
 async def pin(reaction_event):
     channel = client.get_channel(reaction_event.channel_id)
     message = await channel.fetch_message(reaction_event.message_id)
@@ -238,6 +286,8 @@ async def on_message(message):
         await rename_ch(message)
     elif message.content == "!purge":
         await purge(message)
+    elif message.content.startswith("!emoji "):
+        await replace_emoji(message)
     elif message.channel.category.id == CAT_THREAD:
         await age_thread(message)
 
