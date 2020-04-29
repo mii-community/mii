@@ -26,7 +26,7 @@ CAT_ARCHIVE = int(os.getenv("CAT_ARCHIVE", "702074011772911656"))
 MEMBER_ROLE_NAME = str(os.getenv("MEMBER_ROLE_NAME", "member"))
 ARCHIVE_ROLE_NAME = str(os.getenv("ARCHIVE_ROLE_NAME", "view archive"))
 
-hiragana = {
+emojis_main = {
     "あ": "99_aa", "い": "98_ii", "う": "97_uu", "え": "96_ee", "お": "95_oo",
     "か": "94_ka", "き": "93_ki", "く": "92_ku", "け": "91_ke", "こ": "90_ko",
     "さ": "89_sa", "し": "88_si", "す": "87_su", "せ": "86_se", "そ": "85_so",
@@ -42,6 +42,17 @@ hiragana = {
     "っ": "48_ltu",
     "ゃ": "47_lya", "ゅ": "46_lyu", "ょ": "45_lyo",
     "〜": "44_nobasi", "！": "43_exclamation", "？": "42_question"
+}
+
+emojis_sub1 = {
+    "が": "94_ka", "ぎ": "93_ki", "ぐ": "92_ku", "げ": "91_ke", "ご": "90_ko",
+    "ざ": "89_sa", "じ": "88_si", "ず": "87_su", "ぜ": "86_se", "ぞ": "85_so",
+    "だ": "84_ta", "ぢ": "83_ti", "づ": "82_tu", "で": "81_te", "ど": "80_to",
+    "ば": "74_ha", "び": "73_hi", "ぶ": "72_hu", "べ": "71_he", "ぼ": "70_ho",
+}
+
+emojis_sub2 = {
+    "ぱ": "74_ha", "ぴ": "73_hi", "ぷ": "72_hu", "ぺ": "71_he", "ぽ": "70_ho",
 }
 
 
@@ -208,22 +219,43 @@ async def check_webhook(message):
     return webhook
 
 
+async def get_emoji_id(message, emoji_alias):
+    get_emoji = discord.utils.get(message.guild.emojis, name=emoji_alias)
+    emoji_id = get_emoji.id
+    return emoji_id
+
+
+async def get_replaced_char(message, replace_char):
+    if replace_char in emojis_main:
+        emoji_alias = emojis_main[replace_char]
+        emoji_id = await get_emoji_id(message, emoji_alias)
+        replaced_char = "<:" + emoji_alias + ":" + str(emoji_id) + ">"
+        return replaced_char
+    elif replace_char in emojis_sub1:
+        emoji_alias = emojis_sub1[replace_char]
+        emoji_id = await get_emoji_id(message, emoji_alias)
+        replaced_char = "<:" + emoji_alias + ":" + str(emoji_id) + ">" + "ﾞ "
+        return replaced_char
+    elif replace_char in emojis_sub2:
+        emoji_alias = emojis_sub2[replace_char]
+        emoji_id = await get_emoji_id(message, emoji_alias)
+        replaced_char = "<:" + emoji_alias + ":" + str(emoji_id) + ">" + "ﾟ "
+        return replaced_char
+    else:
+        replaced_char = replace_char
+        return replaced_char
+
+
 async def replace_emoji(message):
     webhook = await check_webhook(message)
-    replaces = []
-    string = str(message.content[7:])
-    for char in string:
-        if not char in hiragana:
-            await message.channel.send("対応していない文字が含まれています。")
-            return
-        emoji_alias = hiragana[char]
-        get_emoji = discord.utils.get(message.guild.emojis, name=emoji_alias)
-        emoji_id = get_emoji.id
-        replace = "<:" + emoji_alias + ":" + str(emoji_id) + ">"
-        replaces.append(replace)
-    replaced = " ".join(replaces)
+    replace_string = str(message.content[7:])
+    replaced_string = []
+    for replace_char in replace_string:
+        replaced_char = await get_replaced_char(message, replace_char)
+        replaced_string.append(replaced_char)
+    content = "> " + "".join(replaced_string)
     await message.delete()
-    await webhook.send(avatar_url=message.author.avatar_url, username=message.author.display_name, content=replaced)
+    await webhook.send(avatar_url=message.author.avatar_url, username=message.author.display_name, content=content)
 
 
 async def pin(reaction_event):
