@@ -41,7 +41,11 @@ emojis_main = {
     "ぁ": "53_la", "ぃ": "52_li", "ぅ": "51_lu", "ぇ": "50_le", "ぉ": "49_lo",
     "っ": "48_ltu",
     "ゃ": "47_lya", "ゅ": "46_lyu", "ょ": "45_lyo",
-    "〜": "44_nobasi", "！": "43_exclamation", "？": "42_question"
+    "〜": "44_nobasi", "ー": "44_nobasi",
+    "！": "43_exclamation", "!": "43_exclamation",
+    "？": "42_question", "?": "42_question",
+    "、": "41_touten", ",": "41_touten",
+    "。": "40_kuten", ".": "40_kuten"
 }
 
 emojis_sub1 = {
@@ -253,7 +257,7 @@ async def replace_emoji(message):
     for replace_char in replace_string:
         replaced_char = await get_replaced_char(message, replace_char)
         replaced_string.append(replaced_char)
-    content = "> " + "".join(replaced_string)
+    content = ">>> " + "".join(replaced_string)
     await message.delete()
     await webhook.send(avatar_url=message.author.avatar_url, username=message.author.display_name, content=content)
 
