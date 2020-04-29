@@ -17,6 +17,7 @@ CH_ROOM_MASTER = int(os.getenv("CH_ROOM_MASTER", "702042912338346114"))
 CH_THREAD_MASTER = int(os.getenv("CH_THREAD_MASTER", "702030388033224714"))
 CH_VOICE = int(os.getenv("CH_VOICE", "655319117691355166"))
 CH_VOICE_TEXT = int(os.getenv("CH_VOICE_TEXT", "655319030428598303"))
+CH_DEBUG = int(os.getenv("CH_DEBUG", "678483492564107284"))
 
 CAT_ROOM = int(os.getenv("CAT_ROOM", "702044270609170443"))
 CAT_THREAD = int(os.getenv("CAT_THREAD", "662856289151615025"))
@@ -269,9 +270,8 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    if is_bot(message.author):
+    if is_bot(message.author) or message.channel.id == CH_DEBUG:
         return
-
     if message.content == "!register":
         await register(message)
     elif message.content.startswith("!vc "):
