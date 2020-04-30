@@ -308,7 +308,9 @@ async def on_ready():
 async def on_message(message):
     if is_bot(message.author) or message.channel.id == CH_DEBUG:
         return
-    if message.content == "!register":
+    if message.channel.category.id == CAT_THREAD:
+        await age_thread(message)
+    elif message.content == "!register":
         await register(message)
     elif message.content.startswith("!vc "):
         await rename_vc(message)
@@ -324,8 +326,6 @@ async def on_message(message):
         await purge(message)
     elif message.content.startswith("!emoji "):
         await replace_emoji(message)
-    elif message.channel.category.id == CAT_THREAD:
-        await age_thread(message)
 
 
 @client.event
