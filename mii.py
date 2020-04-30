@@ -310,7 +310,7 @@ async def on_message(message):
         return
     if message.channel.category.id == CAT_THREAD:
         await age_thread(message)
-    elif message.content == "!register":
+    if message.content == "!register":
         await register(message)
     elif message.content.startswith("!vc "):
         await rename_vc(message)
