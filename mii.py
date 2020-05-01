@@ -322,10 +322,11 @@ async def on_message(message):
         await rename_ch(message)
     elif message.content == "!purge":
         await purge(message)
-    elif message.content.startswith("!emoji "):
-        await replace_emoji(message)
-    if message.channel.category.id == CAT_THREAD:
+    elif message.channel.category.id == CAT_THREAD:
         await age_thread(message)
+    if message.content.startswith("!emoji "):
+        await replace_emoji(message)
+
 
 @client.event
 async def on_raw_reaction_add(reaction_event):
