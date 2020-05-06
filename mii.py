@@ -229,26 +229,26 @@ async def check_webhook(message):
     return webhook
 
 
-async def get_emoji_id(message, emoji_alias):
+def get_emoji_id(message, emoji_alias):
     get_emoji = discord.utils.get(message.guild.emojis, name=emoji_alias)
     emoji_id = get_emoji.id
     return emoji_id
 
 
-async def get_replaced_char(message, replace_char):
+def get_replaced_char(message, replace_char):
     if replace_char in emojis_main:
         emoji_alias = emojis_main[replace_char]
-        emoji_id = await get_emoji_id(message, emoji_alias)
+        emoji_id = get_emoji_id(message, emoji_alias)
         replaced_char = "<:" + emoji_alias + ":" + str(emoji_id) + ">"
         return replaced_char
     elif replace_char in emojis_sub1:
         emoji_alias = emojis_sub1[replace_char]
-        emoji_id = await get_emoji_id(message, emoji_alias)
+        emoji_id = get_emoji_id(message, emoji_alias)
         replaced_char = "<:" + emoji_alias + ":" + str(emoji_id) + ">" + "ﾞ "
         return replaced_char
     elif replace_char in emojis_sub2:
         emoji_alias = emojis_sub2[replace_char]
-        emoji_id = await get_emoji_id(message, emoji_alias)
+        emoji_id = get_emoji_id(message, emoji_alias)
         replaced_char = "<:" + emoji_alias + ":" + str(emoji_id) + ">" + "ﾟ "
         return replaced_char
     else:
@@ -261,7 +261,7 @@ async def replace_emoji(message):
     replace_string = str(message.content[7:])
     replaced_string = []
     for replace_char in replace_string:
-        replaced_char = await get_replaced_char(message, replace_char)
+        replaced_char = get_replaced_char(message, replace_char)
         replaced_string.append(replaced_char)
     content = ">>> " + "".join(replaced_string)
     await message.delete()
