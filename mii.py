@@ -65,6 +65,13 @@ def is_bot(user):
     return user.bot
 
 
+def get_vc_channel(before, after):
+    if after.channel:
+        return after.channel
+    elif before.channel:
+        return before.channel
+
+
 async def register(message):
     if message.channel.id != CH_REGISTER:
         await message.channel.send("ここでは実行できません。")
@@ -183,20 +190,19 @@ async def rename_vc(message):
     await message.channel.send(f"{message.author.mention} チャンネル名を {named} に上書きしました。")
 
 
-async def notify_joined_vc(member):
-    embed = discord.Embed(
-        description=f"{member.display_name}が入室しました。",
-        colour=0x000000
-    )
-    await client.get_channel(CH_VOICE_TEXT).send(embed=embed, delete_after=60)
-
-
-async def notify_left_vc(member):
-    embed = discord.Embed(
-        description=f"{member.display_name}が退室しました。",
-        colour=0x000000
-    )
-    await client.get_channel(CH_VOICE_TEXT).send(embed=embed, delete_after=60)
+async def notify_vc(member, before, after):
+    if after.channel:
+        embed = discord.Embed(
+            description=f"{member.display_name}が入室しました。",
+            colour=0x000000
+        )
+        await client.get_channel(CH_VOICE_TEXT).send(embed=embed, delete_after=60)
+    elif before.channel:
+        embed = discord.Embed(
+            description=f"{member.display_name}が退室しました。",
+            colour=0x000000
+        )
+        await client.get_channel(CH_VOICE_TEXT).send(embed=embed, delete_after=60)
 
 
 async def reset_vc_name():
@@ -346,19 +352,14 @@ async def on_raw_reaction_remove(reaction_event):
 async def on_voice_state_update(member, before, after):
     if before.channel == after.channel:
         return
-    if after.channel:
-        if after.channel.id != CH_VOICE:
-            return
-        elif len(after.channel.members) >= 5:
-            await notify_joined_vc(member)
-    elif before.channel:
-        if before.channel.id != CH_VOICE:
-            return
-        elif len(before.channel.members) >= 4:
-            await notify_left_vc(member)
-        elif (len(before.channel.members) == 0
-                and before.channel.name != "vc"):
-            await reset_vc_name()
+    channel = get_vc_channel(before, after)
+    if channel.id != CH_VOICE:
+        return
+    i = len(channel.members)
+    if i >= 5:
+        await notify_vc(member, before, after)
+    elif i == 0 and channel.name != "vc":
+        await reset_vc_name()
 
 
 client.run(TOKEN)
