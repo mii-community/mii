@@ -71,6 +71,29 @@ def get_vc_channel(before, after):
         return before.channel
 
 
+async def send_help(message):
+    embed = discord.Embed(
+        title="各種機能について",
+        description=(
+            "**!open**\nあなたの部屋を作成します。\n\n"
+            "**!open <name>**\n指定した名前のスレッドを作成します。\n\n"
+            "**!rename <name>**\n自分の作成した部屋/スレッドをリネームします。\n\n"
+            "**!close**\n自分の作成したスレッドをアーカイブします。\n\n"
+            "**!vc <name>**\nVC参加中のVC名を変更します。\n\n"
+            "**!emoji <text>**\nサポート済みの絵文字に置き換えます。\n\n"
+            "**!purge <number>**\n指定された数のメッセージを一括削除します。\n"
+            "全削除する場合は<number>にallと指定してください\n\n"
+            "**その他機能**\n"
+            "メッセージに📌リアクションをするとピン留めできます。\n"
+            "スレッドは発言があると一番上に移動します。\n"
+        ),
+        color=0x000000
+    )
+    embed.set_footer(text="このメッセージは60秒後に自動で削除されます。")
+    await message.delete()
+    await message.channel.send(embed=embed, delete_after=60)
+
+
 async def register(message):
     if message.channel.id != CH_REGISTER:
         await message.channel.send("ここでは実行できません。")
@@ -342,6 +365,8 @@ async def on_message(message):
         await rename_ch(message)
     elif message.content.startswith("!purge "):
         await purge(message)
+    elif message.content == "!help":
+        await send_help(message)
     elif message.channel.category.id == CAT_THREAD:
         await age_thread(message)
     if message.content.startswith("!emoji "):
