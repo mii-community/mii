@@ -295,12 +295,23 @@ async def unpin(reaction_event):
 
 
 async def purge(message):
-    if message.author.guild_permissions.administrator:
-        await message.channel.purge()
+    if not message.author.guild_permissions.manage_messages:
+        await message.channel.send(f"メッセージ管理の権限がありません。")
+        return
+    num = message.content[7:]
+    if num == "all":
+        await message.channel.purge(limit=None)
         await message.channel.send("✅")
-    else:
-        await message.channel.send("権限がありません。")
-
+        return
+    try:
+        num = int(num)
+    except:
+        await message.channel.send(
+            f"不正な引数です。削除するメッセージ数か、全て削除する場合はallを入力してください。"
+        )
+        return
+    await message.channel.purge(limit=num)
+    await message.channel.send("✅")
 
 # events
 @client.event
@@ -325,7 +336,7 @@ async def on_message(message):
         await close_thread(message)
     elif message.content.startswith("!rename "):
         await rename_ch(message)
-    elif message.content == "!purge":
+    elif message.content.startswith("!purge "):
         await purge(message)
     elif message.channel.category.id == CAT_THREAD:
         await age_thread(message)
