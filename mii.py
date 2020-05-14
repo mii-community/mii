@@ -264,7 +264,11 @@ async def replace_emoji(message):
         replaced_string.append(replaced_char)
     content = ">>> " + "".join(replaced_string)
     await message.delete()
-    await webhook.send(avatar_url=message.author.avatar_url, username=message.author.display_name, content=content)
+    await webhook.send(
+        avatar_url=message.author.avatar_url,
+        username=message.author.display_name,
+        content=content
+    )
 
 
 async def pin(reaction_event):
