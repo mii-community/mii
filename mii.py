@@ -85,10 +85,11 @@ async def send_help(message):
             "全削除する場合は<number>にallと指定してください\n\n"
             "**その他機能**\n"
             "メッセージに📌リアクションをするとピン留めできます。\n"
-            "スレッドは発言があると一番上に移動します。\n"
+            "スレッドは発言があると一番上に移動します。"
         ),
         color=0x000000
     )
+    embed.add_field(name="", value="", inline=False)
     embed.set_footer(text="このメッセージは60秒後に自動で削除されます。")
     await message.delete()
     await message.channel.send(embed=embed, delete_after=60)
@@ -188,17 +189,13 @@ async def close_ch(message):
         await message.channel.send("権限がありません。")
         return
     elif message.channel.category.id == CAT_ROOM:
-        role = discord.utils.get(message.guild.roles, name=MEMBER_ROLE_NAME)
-        await message.channel.set_permissions(role, overwrite=None)
-        role = discord.utils.get(message.guild.roles, name=ARCHIVE_ROLE_NAME)
-        await message.channel.set_permissions(role, read_messages=True, send_messages=False)
         await message.channel.edit(category=client.get_channel(CAT_ROOM_ARCHIVE))
     elif message.channel.category.id == CAT_THREAD:
-        role = discord.utils.get(message.guild.roles, name=MEMBER_ROLE_NAME)
-        await message.channel.set_permissions(role, overwrite=None)
-        role = discord.utils.get(message.guild.roles, name=ARCHIVE_ROLE_NAME)
-        await message.channel.set_permissions(role, read_messages=True, send_messages=False)
         await message.channel.edit(category=client.get_channel(CAT_THREAD_ARCHIVE))
+    role = discord.utils.get(message.guild.roles, name=MEMBER_ROLE_NAME)
+    await message.channel.set_permissions(role, overwrite=None)
+    role = discord.utils.get(message.guild.roles, name=ARCHIVE_ROLE_NAME)
+    await message.channel.set_permissions(role, read_messages=True, send_messages=False)
 
 
 async def rename_ch(message):
