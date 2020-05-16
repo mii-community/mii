@@ -112,7 +112,7 @@ async def open_room(message):
     category = client.get_channel(CAT_ROOM_ARCHIVE)
     for channel in category.channels:
         if channel.topic == "room-author: " + str(message.author.id):
-            await channel.edit(category=client.get_channel(CAT_R))
+            await channel.edit(category=client.get_channel(CAT_ROOM))
             role = discord.utils.get(
                 message.guild.roles, name=ARCHIVE_ROLE_NAME)
             await channel.set_permissions(role, overwrite=None)
