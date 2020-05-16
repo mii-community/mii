@@ -109,13 +109,6 @@ async def open_room(message):
     if message.channel.id != CH_ROOM_MASTER:
         await message.channel.send("ここでは実行できません。")
         return
-    category = client.get_channel(CAT_ROOM)
-    for channel in category.channels:
-        if channel.topic == "room-author: " + str(message.author.id):
-            await message.channel.send(
-                f"{message.author.mention} {channel.mention} あなたの部屋はもう作られています。"
-            )
-            return
     category = client.get_channel(CAT_ROOM_ARCHIVE)
     for channel in category.channels:
         if channel.topic == "room-author: " + str(message.author.id):
@@ -130,6 +123,13 @@ async def open_room(message):
             await channel.set_permissions(creator, manage_messages=True)
             await message.channel.send(
                 f"{message.author.mention} {channel.mention} をアーカイブから戻しました。"
+            )
+            return
+    category = client.get_channel(CAT_ROOM)
+    for channel in category.channels:
+        if channel.topic == "room-author: " + str(message.author.id):
+            await message.channel.send(
+                f"{message.author.mention} {channel.mention} あなたの部屋はもう作られています。"
             )
             return
     named = message.author.display_name + "の部屋"
