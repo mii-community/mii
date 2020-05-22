@@ -8,9 +8,10 @@ dotenv.load_dotenv()
 client = discord.Client()
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 
+
 # consts
 CH_STARTUP = int(os.getenv("CH_STARTUP", "678483492564107284"))
-CH_REGISTER = int(os.getenv("CH_REGISTER", "653111096747491328"))
+CH_REGISTER = int(os.getenv("CH_REGISTER", "608656664601690142"))
 CH_JOIN = int(os.getenv("CH_JOIN", "653923742245978129"))
 CH_ROOM_MASTER = int(os.getenv("CH_ROOM_MASTER", "702042912338346114"))
 CH_THREAD_MASTER = int(os.getenv("CH_THREAD_MASTER", "702030388033224714"))
@@ -95,14 +96,21 @@ async def send_help(message):
     await message.channel.send(embed=embed, delete_after=60)
 
 
-async def register(message):
-    if message.channel.id != CH_REGISTER:
-        await message.channel.send("ここでは実行できません。")
+async def register(reaction_event):
+    channel = client.get_channel(CH_REGISTER)
+    message = await channel.fetch_message(reaction_event.message_id)
+    guild = discord.utils.find(
+        lambda g: g.id == reaction_event.guild_id, client.guilds)
+    member = discord.utils.find(
+        lambda m: m.id == reaction_event.user_id, guild.members)
+    role = discord.utils.get(guild.roles, name=MEMBER_ROLE_NAME)
+    if role in member.roles:
+        await message.remove_reaction(reaction_event.emoji, member)
         return
-    role = discord.utils.get(message.guild.roles, name=MEMBER_ROLE_NAME)
-    await message.author.add_roles(role)
+    await message.remove_reaction(reaction_event.emoji, member)
+    await member.add_roles(role)
     await client.get_channel(CH_JOIN).send(
-        f"{message.author.mention}が参加しました。"
+        f"{reaction_event.member.mention}が参加しました。"
     )
 
 
@@ -361,6 +369,7 @@ async def purge(message):
     await message.channel.purge(limit=num)
     await message.channel.send("✅")
 
+
 # events
 @client.event
 async def on_ready():
@@ -372,8 +381,6 @@ async def on_ready():
 async def on_message(message):
     if is_bot(message.author):
         return
-    elif message.content == "!register":
-        await register(message)
     elif message.content == "!open":
         await open_room(message)
     elif message.content.startswith("!open "):
@@ -400,6 +407,8 @@ async def on_raw_reaction_add(reaction_event):
         return
     if reaction_event.emoji.name == "\N{PUSHPIN}":
         await pin(reaction_event)
+    elif reaction_event.channel_id == CH_REGISTER:
+        await register(reaction_event)
 
 
 @client.event
