@@ -83,14 +83,14 @@ async def send_help(message):
             "**!emoji <text>**\nサポート済みの絵文字に置き換えます。\n\n"
             "**!purge <number>**\n指定された数のメッセージを一括削除します。\n"
             "全削除する場合は<number>にallと指定してください\n\n"
-            "**その他機能**\n"
+            "**Others**\n"
             "メッセージに📌リアクションをするとピン留めできます。\n"
-            "スレッドは発言があると一番上に移動します。"
+            "スレッドは発言があると一番上に移動します。\n"
+            "--------------------------------------"
         ),
         color=0x000000
     )
-    embed.add_field(name="", value="", inline=False)
-    embed.set_footer(text="このメッセージは60秒後に自動で削除されます。")
+    embed.set_footer(text="*このメッセージは60秒後に自動で削除されます。")
     await message.delete()
     await message.channel.send(embed=embed, delete_after=60)
 
