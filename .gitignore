@@ -137,3 +137,4 @@ dmypy.json
 # debug
 test.py
 temp.py
+.vscode
