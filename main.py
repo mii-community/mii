@@ -10,7 +10,8 @@ dotenv.load_dotenv()
 
 EXTENSIONS = [
     "cogs.register",
-    "cogs.thread"
+    "cogs.thread",
+    "cogs.pin"
 ]
 
 
