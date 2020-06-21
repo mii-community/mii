@@ -26,7 +26,7 @@ class MyBot(commands.Bot):
                 traceback.print_exc()
 
     async def on_ready(self):
-        print("logged in: ", self.user.name, self.user.id)
+        print("logged in:", self.user.name, self.user.id)
 
 
 if __name__ == '__main__':
