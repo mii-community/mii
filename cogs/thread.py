@@ -16,9 +16,6 @@ class ThreadCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.guild.id != 724131075764387971:
-            return
-        
         if (message.author.bot
             or message.channel.category.id != CAT_THREAD):
             return
