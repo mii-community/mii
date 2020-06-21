@@ -12,6 +12,7 @@ EXTENSIONS = [
     "cogs.register",
     "cogs.room",
     "cogs.thread",
+    "cogs.close",
     "cogs.pin"
 ]
 
