@@ -14,6 +14,7 @@ EXTENSIONS = [
     "cogs.thread",
     "cogs.rename_ch",
     "cogs.close",
+    "cogs.voice",
     "cogs.pin",
     "cogs.purge",
 ]
