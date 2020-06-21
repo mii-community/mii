@@ -17,6 +17,7 @@ class RoomCog(commands.Cog):
 
     @commands.command()
     async def open(self, ctx):
+        """スレッドマスターで使うことであなたの部屋を作成します。"""
         if ctx.author.bot:
             return
         elif ctx.channel.id != CH_ROOM_MASTER:

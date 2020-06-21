@@ -24,7 +24,7 @@ EXTENSIONS = [
 class MyBot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix=commands.when_mentioned_or("!"), help_command=Help())
-        
+
         for cog in EXTENSIONS:
             try:
                 self.load_extension(cog)
@@ -34,18 +34,18 @@ class MyBot(commands.Bot):
     async def on_ready(self):
         print("logged in:", self.user.name, self.user.id)
 
-class Help(commands.MinimalHelpCommand):
+
+class Help(commands.DefaultHelpCommand):
     def __init__(self):
         super().__init__()
         self.no_category = "その他"
         self.command_attrs["help"] = "コマンド一覧と簡単な説明を表示"
-    
-    def get_opening_note(self):
-        return (f"!コマンド または <@678034377976053761> コマンド で利用することができます。")
 
     def get_ending_note(self):
         return (f"メッセージに📌リアクションをするとピン留めできます。\n"
-                f"スレッドは発言があると一番上に移動します。")
+                f"スレッドは発言があると一番上に移動します。\n"
+                f"!コマンド または @みぃ様 コマンド でも利用することができます。")
+
 
 if __name__ == '__main__':
     bot = MyBot()

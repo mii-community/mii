@@ -12,6 +12,7 @@ class Rename_chCog(commands.Cog):
 
     @commands.command()
     async def rename(self, ctx, named):
+        """!rename <named> で自分の作成した部屋/スレッドをリネームします。"""
         if (ctx.channel.category.id != CAT_ROOM
                 and ctx.channel.category.id != CAT_THREAD):
             await ctx.send("ここでは実行できません。")
