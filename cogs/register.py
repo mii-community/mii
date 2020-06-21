@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 import os
 
+# consts
 CH_REGISTER = int(os.getenv("CH_REGISTER", "608656664601690142"))
 CH_JOIN = int(os.getenv("CH_JOIN", "653923742245978129"))
 MEMBER_ROLE_NAME = str(os.getenv("MEMBER_ROLE_NAME", "member"))
