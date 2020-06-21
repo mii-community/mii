@@ -1,1 +1,1 @@
-bot: python mii.py
+bot: python main.py
