@@ -9,7 +9,7 @@ dotenv.load_dotenv()
 
 
 EXTENSIONS = [
-    "cogs.room"
+    "cogs.thread"
 ]
 
 
