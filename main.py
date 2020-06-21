@@ -17,6 +17,7 @@ EXTENSIONS = [
     "cogs.voice",
     "cogs.pin",
     "cogs.purge",
+    "cogs.replace_emoji"
 ]
 
 
