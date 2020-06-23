@@ -15,7 +15,8 @@ class MyBot(commands.Bot):
             try:
                 cog = f"cogs.{cog.replace('.py', '')}"
                 self.load_extension(cog)
-            except Exception:
+                print(f"{cog}は正常に読み込まれました。")
+            except:
                 traceback.print_exc()
 
     async def on_ready(self):
