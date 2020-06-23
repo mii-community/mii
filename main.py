@@ -20,7 +20,8 @@ class MyBot(commands.Bot):
                 traceback.print_exc()
 
     async def on_ready(self):
-        print("logged in:", self.user.name, self.user.id)
+        print("logged in as:", self.user.name, self.user.id)
+
 
 class Help(commands.MinimalHelpCommand):
     def __init__(self):
