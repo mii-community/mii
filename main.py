@@ -1,3 +1,6 @@
+
+import ssl
+import asyncpg
 from discord.ext import commands
 
 import os
@@ -5,6 +8,15 @@ import traceback
 
 import dotenv
 dotenv.load_dotenv()
+
+
+async def create_db_pool():
+    # 残念なことに、ここから--
+    ctx = ssl.create_default_context(cafile='')
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    # --ここまでのコードがないと接続ができない。
+    bot.datebase = await asyncpg.create_pool(os.getenv("DATABASE_URL"), ssl=ctx)
 
 
 class MyBot(commands.Bot):
@@ -36,4 +48,5 @@ class Help(commands.DefaultHelpCommand):
 
 if __name__ == '__main__':
     bot = MyBot()
+    bot.loop.run_until_complete(create_db_pool())
     bot.run(os.getenv("DISCORD_BOT_TOKEN"))
