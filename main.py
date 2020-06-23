@@ -8,25 +8,12 @@ import dotenv
 dotenv.load_dotenv()
 
 
-EXTENSIONS = [
-    "cogs.register",
-    "cogs.room",
-    "cogs.thread",
-    "cogs.rename_ch",
-    "cogs.close",
-    "cogs.voice",
-    "cogs.pin",
-    "cogs.purge",
-    "cogs.replace_emoji"
-]
-
-
 class MyBot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix=commands.when_mentioned_or("!"), help_command=Help())
-        
-        for cog in EXTENSIONS:
+        for cog in [cogs for cogs in os.listdir("./cogs") if cogs.endswith(".py")]:
             try:
+                cog = f"cogs.{cog.replace('.py', '')}"
                 self.load_extension(cog)
             except Exception:
                 traceback.print_exc()
