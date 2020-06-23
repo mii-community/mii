@@ -1,4 +1,3 @@
-
 from discord.ext import commands
 
 import os
@@ -28,7 +27,7 @@ class Help(commands.DefaultHelpCommand):
         super().__init__()
         self.no_category = "その他"
         self.command_attrs["help"] = "コマンド一覧と簡単な説明を表示"
-    
+
     def get_ending_note(self):
         return (f"メッセージに📌リアクションをするとピン留めできます。\n"
                 f"スレッドは発言があると一番上に移動します。\n"
