@@ -10,7 +10,7 @@ MEMBER_ROLE_NAME = str(os.getenv("MEMBER_ROLE_NAME", "member"))
 ARCHIVE_ROLE_NAME = str(os.getenv("ARCHIVE_ROLE_NAME", "view archive"))
 
 
-class RoomCog(commands.Cog):
+class Room(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -55,4 +55,4 @@ class RoomCog(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(RoomCog(bot))
+    bot.add_cog(Room(bot))
