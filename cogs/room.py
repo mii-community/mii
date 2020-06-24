@@ -5,8 +5,7 @@ import os
 # consts
 CH_ROOM_MASTER = int(os.getenv("CH_ROOM_MASTER", "702042912338346114"))
 CAT_ROOM = int(os.getenv("CAT_ROOM", "702044270609170443"))
-CAT_ROOM_ARCHIVE = int(os.getenv("CAT_THREAD_ARCHIVE", "711058666387800135"))
-
+CAT_ROOM_ARCHIVE = int(os.getenv("CAT_ROOM_ARCHIVE", "711058666387800135"))
 MEMBER_ROLE_NAME = str(os.getenv("MEMBER_ROLE_NAME", "member"))
 ARCHIVE_ROLE_NAME = str(os.getenv("ARCHIVE_ROLE_NAME", "view archive"))
 
