@@ -5,8 +5,8 @@ import os
 CH_ROOM_MASTER = int(os.getenv("CH_ROOM_MASTER", "702042912338346114"))
 CAT_ROOM = int(os.getenv("CAT_ROOM", "702044270609170443"))
 CAT_ROOM_ARCHIVE = int(os.getenv("CAT_ROOM_ARCHIVE", "711058666387800135"))
-MEMBER_ROLE_NAME = str(os.getenv("MEMBER_ROLE_NAME", "member"))
-ARCHIVE_ROLE_NAME = str(os.getenv("ARCHIVE_ROLE_NAME", "view archive"))
+ROLE_MEMBER = int(os.getenv("ROLE_MEMBER", "652885488197435422"))
+ROLE_ARCHIVE = int(os.getenv("ROLE_ARCHIVE", "702420267309203466"))
 
 
 class Room(commands.Cog):
@@ -42,9 +42,8 @@ class Room(commands.Cog):
 
         cat_room = self.bot.get_channel(CAT_ROOM)
         cat_room_archive = self.bot.get_channel(CAT_ROOM_ARCHIVE)
-        role_member = discord.utils.get(ctx.guild.roles, name=MEMBER_ROLE_NAME)
-        role_archive = discord.utils.get(
-            ctx.guild.roles, name=ARCHIVE_ROLE_NAME)
+        role_member = ctx.guild.get_role(ROLE_MEMBER)
+        role_archive = ctx.guild.get_role(ROLE_ARCHIVE)
         creator = ctx.guild.get_member(ctx.author.id)
         except_flag = True
 

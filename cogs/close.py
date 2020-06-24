@@ -9,8 +9,8 @@ CAT_ROOM_ARCHIVE = int(os.getenv("CAT_ROOM_ARCHIVE", "711058666387800135"))
 CH_THREAD_MASTER = int(os.getenv("CH_THREAD_MASTER", "702030388033224714"))
 CAT_THREAD = int(os.getenv("CAT_THREAD", "662856289151615025"))
 CAT_THREAD_ARCHIVE = int(os.getenv("CAT_THREAD_ARCHIVE", "702074011772911656"))
-MEMBER_ROLE_NAME = str(os.getenv("MEMBER_ROLE_NAME", "member"))
-ARCHIVE_ROLE_NAME = str(os.getenv("ARCHIVE_ROLE_NAME", "view archive"))
+ROLE_MEMBER = int(os.getenv("ROLE_MEMBER", "652885488197435422"))
+ROLE_ARCHIVE = int(os.getenv("ROLE_ARCHIVE", "702420267309203466"))
 
 
 class CloseCog(commands.Cog):
@@ -34,9 +34,9 @@ class CloseCog(commands.Cog):
             await ctx.channel.edit(category=self.bot.get_channel(CAT_ROOM_ARCHIVE))
         elif ctx.channel.category.id == CAT_THREAD:
             await ctx.channel.edit(category=self.bot.get_channel(CAT_THREAD_ARCHIVE))
-        role = discord.utils.get(ctx.guild.roles, name=MEMBER_ROLE_NAME)
+        role = ctx.guild.get_role(ROLE_MEMBER)
         await ctx.channel.set_permissions(role, overwrite=None)
-        role = discord.utils.get(ctx.guild.roles, name=ARCHIVE_ROLE_NAME)
+        role = ctx.guild.get_role(ROLE_ARCHIVE)
         await ctx.channel.set_permissions(role, read_messages=True, send_messages=False)
 
 

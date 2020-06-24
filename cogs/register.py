@@ -5,7 +5,7 @@ import os
 # consts
 CH_REGISTER = int(os.getenv("CH_REGISTER", "608656664601690142"))
 CH_JOIN = int(os.getenv("CH_JOIN", "653923742245978129"))
-MEMBER_ROLE_NAME = str(os.getenv("MEMBER_ROLE_NAME", "member"))
+ROLE_MEMBER = int(os.getenv("ROLE_MEMBER", "652885488197435422"))
 
 
 class RegisterCog(commands.Cog):
@@ -21,7 +21,7 @@ class RegisterCog(commands.Cog):
                 lambda g: g.id == reaction_event.guild_id, self.bot.guilds)
             member = discord.utils.find(
                 lambda m: m.id == reaction_event.user_id, guild.members)
-            role = discord.utils.get(guild.roles, name=MEMBER_ROLE_NAME)
+            role = guild.get_role(ROLE_MEMBER)
             if role in member.roles:
                 await message.remove_reaction(reaction_event.emoji, member)
                 return

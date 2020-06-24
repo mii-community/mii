@@ -6,8 +6,8 @@ import os
 CH_THREAD_MASTER = int(os.getenv("CH_THREAD_MASTER", "702030388033224714"))
 CAT_THREAD = int(os.getenv("CAT_THREAD", "662856289151615025"))
 CAT_THREAD_ARCHIVE = int(os.getenv("CAT_THREAD_ARCHIVE", "702074011772911656"))
-MEMBER_ROLE_NAME = str(os.getenv("MEMBER_ROLE_NAME", "member"))
-ARCHIVE_ROLE_NAME = str(os.getenv("ARCHIVE_ROLE_NAME", "view archive"))
+ROLE_MEMBER = int(os.getenv("ROLE_MEMBER", "652885488197435422"))
+ROLE_ARCHIVE = int(os.getenv("ROLE_ARCHIVE", "702420267309203466"))
 
 
 class ThreadCog(commands.Cog):
@@ -34,11 +34,9 @@ class ThreadCog(commands.Cog):
                 )
             elif matched.category.id == CAT_THREAD_ARCHIVE:
                 await matched.edit(category=self.bot.get_channel(CAT_THREAD))
-                role = discord.utils.get(
-                    message.guild.roles, name=ARCHIVE_ROLE_NAME)
+                role = message.guild.get_role(ROLE_ARCHIVE)
                 await matched.set_permissions(role, overwrite=None)
-                role = discord.utils.get(
-                    message.guild.roles, name=MEMBER_ROLE_NAME)
+                role = message.guild.get_role(ROLE_MEMBER)
                 await matched.set_permissions(role, read_messages=True)
                 await matched.edit(topic="thread-author: " + str(message.author.id))
                 await message.channel.send(
