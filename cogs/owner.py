@@ -21,9 +21,8 @@ class Owner(commands.Cog):
             ctx.channel.id, member.id, ctx.guild.id
         )
         await ctx.send(f"このチャンネルの所有者は{member.display_name}にセットされました。")
-
-        if not member.permissions_in(ctx.channel).manage_messages:
-            await ctx.channel.set_permissions(member, manage_messages=True)
+        await ctx.channel.set_permissions(member, manage_messages=True)
+        await ctx.channel.set_permissions(member, manage_channels=True)
 
 
 def setup(bot):

@@ -19,14 +19,20 @@ class CloseCog(commands.Cog):
                 and (not ctx.author.guild_permissions.administrator)):
             await ctx.send("権限がありません。")
             return
-        elif ctx.channel.category.id == launcher.CAT_ROOM:
-            await ctx.channel.edit(category=self.bot.get_channel(launcher.CAT_ROOM_ARCHIVE))
-        elif ctx.channel.category.id == launcher.CAT_THREAD:
-            await ctx.channel.edit(category=self.bot.get_channel(launcher.CAT_THREAD_ARCHIVE))
-        role = ctx.guild.get_role(launcher.ROLE_MEMBER)
-        await ctx.channel.set_permissions(role, overwrite=None)
-        role = ctx.guild.get_role(launcher.ROLE_ARCHIVE)
-        await ctx.channel.set_permissions(role, read_messages=True, send_messages=False)
+
+        cat_room = self.bot.get_channel(launcher.CAT_ROOM)
+        cat_room_archive = self.bot.get_channel(launcher.CAT_ROOM_ARCHIVE)
+        cat_thread = self.bot.get_channel(launcher.CAT_THREAD)
+        cat_thread_archive = self.bot.get_channel(launcher.CAT_THREAD_ARCHIVE)
+        role_member = ctx.guild.get_role(launcher.ROLE_MEMBER)
+        role_archive = ctx.guild.get_role(launcher.ROLE_ARCHIVE)
+
+        if ctx.channel.category == cat_room:
+            await ctx.channel.edit(category=cat_room_archive)
+        elif ctx.channel.category == cat_thread:
+            await ctx.channel.edit(category=cat_thread_archive)
+        await ctx.channel.set_permissions(role_member, overwrite=None)
+        await ctx.channel.set_permissions(role_archive, read_messages=True, send_messages=False)
 
 
 def setup(bot):
