@@ -1,13 +1,7 @@
 from discord.ext import commands
 import discord
 import os
-
-CH_ROOM_MASTER = int(os.getenv("CH_ROOM_MASTER", "702042912338346114"))
-CAT_ROOM = int(os.getenv("CAT_ROOM", "702044270609170443"))
-CAT_ROOM_ARCHIVE = int(os.getenv("CAT_ROOM_ARCHIVE", "711058666387800135"))
-ROLE_MEMBER = int(os.getenv("ROLE_MEMBER", "652885488197435422"))
-ROLE_ARCHIVE = int(os.getenv("ROLE_ARCHIVE", "702420267309203466"))
-
+import launcher
 
 class Room(commands.Cog):
     def __init__(self, bot):
@@ -17,7 +11,7 @@ class Room(commands.Cog):
     async def open(self, ctx):
         if ctx.author.bot:
             return
-        elif ctx.channel.id != CH_ROOM_MASTER:
+        elif ctx.channel.id != launcher.CH_ROOM_MASTER:
             await ctx.send("ここでは実行できません。")
             return
 
@@ -40,10 +34,10 @@ class Room(commands.Cog):
                 ctx.author.id, ctx.guild.id
             )
 
-        cat_room = self.bot.get_channel(CAT_ROOM)
-        cat_room_archive = self.bot.get_channel(CAT_ROOM_ARCHIVE)
-        role_member = ctx.guild.get_role(ROLE_MEMBER)
-        role_archive = ctx.guild.get_role(ROLE_ARCHIVE)
+        cat_room = self.bot.get_channel(launcher.CAT_ROOM)
+        cat_room_archive = self.bot.get_channel(launcher.CAT_ROOM_ARCHIVE)
+        role_member = ctx.guild.get_role(launcher.ROLE_MEMBER)
+        role_archive = ctx.guild.get_role(launcher.ROLE_ARCHIVE)
         creator = ctx.guild.get_member(ctx.author.id)
         except_flag = True
 
