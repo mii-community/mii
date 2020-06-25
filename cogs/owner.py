@@ -11,6 +11,26 @@ class Owner(commands.Cog):
     @commands.command(name="set")
     @commands.is_owner()
     async def db_set_room_id(self, ctx, member: discord.Member):
+        
+        user = await self.bot.datebase.fetchrow(
+            """
+            SELECT *
+              FROM mii
+             WHERE user_id = $1
+               AND guild_id = $2
+            """,
+            member.id, ctx.guild.id
+        )
+        if not user:
+            user = await self.bot.datebase.fetchrow(
+                """
+                INSERT INTO mii (user_id, guild_id)
+                     VALUES ($1, $2)
+                  RETURNING *
+                """,
+                member.id, ctx.guild.id
+            )
+
         await self.bot.datebase.execute(
             """
             UPDATE mii
