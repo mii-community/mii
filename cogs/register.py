@@ -11,11 +11,9 @@ class RegisterCog(commands.Cog):
     async def on_raw_reaction_add(self, reaction_event):
         if reaction_event.channel_id == launcher.CH_REGISTER:
             channel = self.bot.get_channel(launcher.CH_REGISTER)
+            guild = self.bot.get_guild(reaction_event.guild_id)
             message = await channel.fetch_message(reaction_event.message_id)
-            guild = discord.utils.find(
-                lambda g: g.id == reaction_event.guild_id, self.bot.guilds)
-            member = discord.utils.find(
-                lambda m: m.id == reaction_event.user_id, guild.members)
+            member = reaction_event.member
             role = guild.get_role(launcher.ROLE_MEMBER)
             if role in member.roles:
                 await message.remove_reaction(reaction_event.emoji, member)
