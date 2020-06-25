@@ -1,17 +1,6 @@
 from discord.ext import commands
 import discord
-import os
-
-# consts
-CH_ROOM_MASTER = int(os.getenv("CH_ROOM_MASTER", "702042912338346114"))
-CAT_ROOM = int(os.getenv("CAT_ROOM", "702044270609170443"))
-CAT_ROOM_ARCHIVE = int(os.getenv("CAT_THREAD_ARCHIVE", "711058666387800135"))
-CH_THREAD_MASTER = int(os.getenv("CH_THREAD_MASTER", "702030388033224714"))
-CAT_THREAD = int(os.getenv("CAT_THREAD", "662856289151615025"))
-CAT_THREAD_ARCHIVE = int(os.getenv("CAT_THREAD_ARCHIVE", "702074011772911656"))
-MEMBER_ROLE_NAME = str(os.getenv("MEMBER_ROLE_NAME", "member"))
-ARCHIVE_ROLE_NAME = str(os.getenv("ARCHIVE_ROLE_NAME", "view archive"))
-
+import launcher
 
 class CloseCog(commands.Cog):
     def __init__(self, bot):
@@ -22,8 +11,8 @@ class CloseCog(commands.Cog):
         """自分の作成した部屋/スレッドをアーカイブします。"""
         if ctx.author.bot:
             return
-        elif (ctx.channel.category.id != CAT_ROOM
-                and ctx.channel.category.id != CAT_THREAD):
+        elif (ctx.channel.category.id != launcher.CAT_ROOM
+                and ctx.channel.category.id != launcher.CAT_THREAD):
             await ctx.send("ここでは実行できません。")
             return
         elif (ctx.channel.topic != "room-author: " + str(ctx.author.id)
@@ -31,14 +20,20 @@ class CloseCog(commands.Cog):
                 and (not ctx.author.guild_permissions.administrator)):
             await ctx.send("権限がありません。")
             return
-        elif ctx.channel.category.id == CAT_ROOM:
-            await ctx.channel.edit(category=self.bot.get_channel(CAT_ROOM_ARCHIVE))
-        elif ctx.channel.category.id == CAT_THREAD:
-            await ctx.channel.edit(category=self.bot.get_channel(CAT_THREAD_ARCHIVE))
-        role = discord.utils.get(ctx.guild.roles, name=MEMBER_ROLE_NAME)
-        await ctx.channel.set_permissions(role, overwrite=None)
-        role = discord.utils.get(ctx.guild.roles, name=ARCHIVE_ROLE_NAME)
-        await ctx.channel.set_permissions(role, read_messages=True, send_messages=False)
+
+        cat_room = self.bot.get_channel(launcher.CAT_ROOM)
+        cat_room_archive = self.bot.get_channel(launcher.CAT_ROOM_ARCHIVE)
+        cat_thread = self.bot.get_channel(launcher.CAT_THREAD)
+        cat_thread_archive = self.bot.get_channel(launcher.CAT_THREAD_ARCHIVE)
+        role_member = ctx.guild.get_role(launcher.ROLE_MEMBER)
+        role_archive = ctx.guild.get_role(launcher.ROLE_ARCHIVE)
+
+        if ctx.channel.category == cat_room:
+            await ctx.channel.edit(category=cat_room_archive)
+        elif ctx.channel.category == cat_thread:
+            await ctx.channel.edit(category=cat_thread_archive)
+        await ctx.channel.set_permissions(role_member, overwrite=None)
+        await ctx.channel.set_permissions(role_archive, read_messages=True, send_messages=False)
 
 
 def setup(bot):
