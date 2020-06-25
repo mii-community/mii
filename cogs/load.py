@@ -33,7 +33,7 @@ class Load(commands.Cog):
             self.bot.reload_extension("cogs." + cog)
             await ctx.send(f"{cog}.pyは正常にリロードされました。")
         except:
-            await ctx.send("{cog}.pyはリロードできませんでした。ログを確認してください。")
+            await ctx.send(f"{cog}.pyはリロードできませんでした。ログを確認してください。")
             traceback.print_exc()
 
     @commands.command()
