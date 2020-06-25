@@ -45,8 +45,7 @@ class Room(commands.Cog):
         async def new_room():
             named = f"{ctx.author.display_name}の部屋"
             new_room = await cat_room.create_text_channel(name=named)
-            await new_room.set_permissions(creator, manage_messages=True)
-            await new_room.set_permissions(creator, manage_channels=True)
+            await new_room.set_permissions(creator, manage_messages=True, manage_channels=True)
             await ctx.send(
                 f"{ctx.author.mention} {new_room.mention} を作成しました。"
             )
@@ -83,8 +82,7 @@ class Room(commands.Cog):
                 await channel.edit(category=cat_room)
                 await channel.set_permissions(role_archive, overwrite=None)
                 await channel.set_permissions(role_member, read_messages=True)
-                await channel.set_permissions(creator, manage_messages=True)
-                await channel.set_permissions(creator, manage_channels=True)
+                await channel.set_permissions(creator, manage_messages=True, manage_channels=True)
                 await ctx.send(
                     f"{ctx.author.mention} {channel.mention} をアーカイブから戻しました。"
                 )
