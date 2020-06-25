@@ -24,15 +24,14 @@ class MyBot(commands.Bot):
         super().__init__(command_prefix=commands.when_mentioned_or("!"), help_command=Help())
         for cog in [cogs for cogs in os.listdir("./cogs") if cogs.endswith(".py")]:
             try:
-                cog = f"cogs.{cog.replace('.py', '')}"
-                self.load_extension(cog)
-                print(f"{cog}は正常に読み込まれました。")
+                cog = cog.replace('.py', '')
+                self.load_extension("cogs." + cog)
+                print(f"{cog}.pyは正常に読み込まれました。")
             except:
                 traceback.print_exc()
 
     async def on_ready(self):
         print("logged in as:", self.user.name, self.user.id)
-
 
 class Help(commands.DefaultHelpCommand):
     def __init__(self):
