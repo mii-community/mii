@@ -8,6 +8,7 @@ class CloseCog(commands.Cog):
 
     @commands.command()
     async def close(self, ctx):
+        """自分の作成した部屋/スレッドをアーカイブします。"""
         if ctx.author.bot:
             return
         elif (ctx.channel.category.id != launcher.CAT_ROOM

@@ -82,6 +82,7 @@ class Replace_emojiCog(commands.Cog):
 
     @commands.command()
     async def emoji(self, ctx, replace_string):
+        """!emoji <text> でテキストをサポート済みの絵文字に置き換えます。"""
         webhook = await check_webhook(ctx)
         replaced_string = []
         for replace_char in replace_string:

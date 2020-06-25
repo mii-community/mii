@@ -7,6 +7,7 @@ class PurgeCog(commands.Cog):
 
     @commands.command()
     async def purge(self, ctx, num):
+        """!purge <number> で指定された数のメッセージを一括削除します。"""
         channel = ctx.channel
         if not ctx.author.permissions_in(channel).manage_messages:
             await channel.send(f"メッセージ管理の権限がありません。")
