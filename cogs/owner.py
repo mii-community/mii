@@ -10,7 +10,7 @@ class Owner(commands.Cog, command_attrs=dict(hidden=True)):
 
     @commands.command(name="set")
     @commands.is_owner()
-    async def db_set_room_id(self, ctx, member: discord.Member):
+    async def db_set_room_id(self, TextChannel: discord.TextChannel, member: discord.Member):
         
         user = await self.bot.datebase.fetchrow(
             """
@@ -34,9 +34,9 @@ class Owner(commands.Cog, command_attrs=dict(hidden=True)):
         await self.bot.datebase.execute(
             """
             UPDATE mii
-            SET room_id = $1
-            WHERE user_id = $2
-            AND guild_id = $3
+               SET room_id = $1
+             WHERE user_id = $2
+               AND guild_id = $3
             """,
             ctx.channel.id, member.id, ctx.guild.id
         )
