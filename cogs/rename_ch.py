@@ -10,12 +10,34 @@ class Rename_chCog(commands.Cog):
     @commands.command()
     async def rename(self, ctx, named):
         """あなたの部屋/スレッドをリネームします。"""
+        if ctx.author.bot:
+            return
+        elif (ctx.channel.category.id != launcher.CAT_ROOM
                 and ctx.channel.category.id != launcher.CAT_THREAD):
             await ctx.send("ここでは実行できません。")
             return
-        elif (ctx.channel.topic != "room-author: " + str(ctx.author.id)
-                and ctx.channel.topic != "thread-author: " + str(ctx.author.id)
-                and (not ctx.author.guild_permissions.administrator)):
+
+        user = await self.bot.datebase.fetchrow(
+            """
+            SELECT *
+              FROM mii
+             WHERE user_id = $1
+               AND guild_id = $2
+            """,
+            ctx.author.id, ctx.guild.id
+        )
+        if not user:
+            user = await self.bot.datebase.fetchrow(
+                """
+                INSERT INTO mii (user_id, guild_id)
+                     VALUES ($1, $2)
+                  RETURNING *
+                """,
+                ctx.author.id, ctx.guild.id
+            )
+
+        if (ctx.channel.id != user['room_id']
+                and ctx.channel.topic != "thread-author: " + str(ctx.author.id)):
             await ctx.send("権限がありません。")
             return
         await ctx.channel.edit(name=named)
