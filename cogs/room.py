@@ -52,9 +52,9 @@ class Room(commands.Cog):
             await self.bot.datebase.execute(
                 """
                 UPDATE mii
-                SET room_id = $1
-                WHERE user_id = $2
-                AND guild_id = $3
+                   SET room_id = $1
+                 WHERE user_id = $2
+                   AND guild_id = $3
                 """,
                 new_room.id, ctx.author.id, ctx.guild.id
             )
