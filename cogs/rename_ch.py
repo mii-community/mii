@@ -9,7 +9,7 @@ class Rename_chCog(commands.Cog):
 
     @commands.command()
     async def rename(self, ctx, named):
-        if (ctx.channel.category.id != launcher.CAT_ROOM
+        """あなたの部屋/スレッドをリネームします。"""
                 and ctx.channel.category.id != launcher.CAT_THREAD):
             await ctx.send("ここでは実行できません。")
             return

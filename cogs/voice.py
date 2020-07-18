@@ -17,6 +17,7 @@ class VoiceCog(commands.Cog):
 
     @commands.command()
     async def vc(self, ctx, named):
+        """VC参加中に使うことでVCのリネームができます。"""
         if ctx.channel.id != launcher.CH_VOICE_TEXT:
             await ctx.send(f"{ctx.author.mention} ここでは実行できません。")
             return

@@ -3,7 +3,7 @@ import os
 import traceback
 
 
-class Load(commands.Cog):
+class Load(commands.Cog, command_attrs=dict(hidden=True)):
     def __init__(self, bot):
         self.bot = bot
 
