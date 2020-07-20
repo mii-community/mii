@@ -36,12 +36,13 @@ class Rename_chCog(commands.Cog):
                 ctx.author.id, ctx.guild.id
             )
 
-        if (ctx.channel.id != user['room_id']
-                and ctx.channel.topic != "thread-author: " + str(ctx.author.id)):
-            await ctx.send("権限がありません。")
+        if (ctx.channel.id == user['room_id']
+                or ctx.channel.topic == "thread-author: " + str(ctx.author.id)):
+            await ctx.channel.edit(name=named)
+            await ctx.send(f"{ctx.author.mention} チャンネル名を {named} に上書きしました。")
             return
-        await ctx.channel.edit(name=named)
-        await ctx.send(f"{ctx.author.mention} チャンネル名を {named} に上書きしました。")
+        await ctx.send("権限がありません。")
+        return
 
 
 def setup(bot):
