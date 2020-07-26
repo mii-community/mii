@@ -57,9 +57,9 @@ class Help(commands.DefaultHelpCommand):
         self.command_attrs["help"] = "コマンド一覧と簡単な説明を表示"
 
     def get_ending_note(self):
-        return (f"メッセージに📌リアクションをするとピン留めできます。\n"
-                f"スレッドは発言があると一番上に移動します。\n"
-                f"!コマンド または @みぃ様 コマンド でも利用することができます。")
+        return ("メッセージに📌リアクションをするとピン留めできます。\n"
+                "スレッドは発言があると一番上に移動します。\n"
+                "!コマンド または @みぃ様 コマンド でも利用することができます。")
 
 
 if __name__ == '__main__':
