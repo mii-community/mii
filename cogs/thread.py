@@ -1,6 +1,8 @@
-from discord.ext import commands
-import discord
 import os
+
+import discord
+from discord.ext import commands
+
 import launcher
 
 
@@ -10,14 +12,15 @@ class ThreadCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if (message.author.bot
-                or message.channel.category.id != launcher.CAT_THREAD):
+        if message.author.bot or message.channel.category.id != launcher.CAT_THREAD:
             return
         elif message.channel.id == launcher.CH_THREAD_MASTER:
             named = message.content
             matched = discord.utils.get(message.guild.channels, name=named)
             if not matched:
-                new_channel = await self.bot.get_channel(launcher.CAT_THREAD).create_text_channel(name=named)
+                new_channel = await self.bot.get_channel(
+                    launcher.CAT_THREAD
+                ).create_text_channel(name=named)
                 await new_channel.edit(topic="thread-author: " + str(message.author.id))
                 await message.channel.send(
                     f"{message.author.mention} {new_channel.mention} を作成しました。"

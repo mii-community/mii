@@ -1,6 +1,8 @@
-from discord.ext import commands
 import os
+
 import discord
+from discord.ext import commands
+
 import launcher
 
 
@@ -44,24 +46,25 @@ class VoiceCog(commands.Cog):
         i = len(channel.members)
         if after.channel and i >= 2:
             embed = discord.Embed(
-                description=f"{member.display_name}が入室しました。",
-                colour=0x000000
+                description=f"{member.display_name}が入室しました。", colour=0x000000
             )
-            await self.bot.get_channel(launcher.CH_VOICE_TEXT).send(embed=embed, delete_after=60)
+            await self.bot.get_channel(launcher.CH_VOICE_TEXT).send(
+                embed=embed, delete_after=60
+            )
         elif before.channel and i >= 1:
             embed = discord.Embed(
-                description=f"{member.display_name}が退室しました。",
-                colour=0x000000
+                description=f"{member.display_name}が退室しました。", colour=0x000000
             )
-            await self.bot.get_channel(launcher.CH_VOICE_TEXT).send(embed=embed, delete_after=60)
+            await self.bot.get_channel(launcher.CH_VOICE_TEXT).send(
+                embed=embed, delete_after=60
+            )
         elif i == 0 and channel.name != "vc":
             channel = self.bot.get_channel(launcher.CH_VOICE)
             await channel.edit(name="vc")
             channel = self.bot.get_channel(launcher.CH_VOICE_TEXT)
             await channel.edit(name="vc-text")
             embed = discord.Embed(
-                description=f"接続人数が0になったのでチャンネル名をリセットしました。",
-                colour=0x000000
+                description=f"接続人数が0になったのでチャンネル名をリセットしました。", colour=0x000000
             )
             await channel.send(embed=embed, delete_after=60)
 

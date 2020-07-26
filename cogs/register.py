@@ -1,7 +1,10 @@
-from discord.ext import commands
-import discord
 import os
+
+import discord
+from discord.ext import commands
+
 import launcher
+
 
 class RegisterCog(commands.Cog):
     def __init__(self, bot):

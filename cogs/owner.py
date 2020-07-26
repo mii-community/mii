@@ -1,7 +1,8 @@
-from discord.ext import commands
 import os
 import traceback
+
 import discord
+from discord.ext import commands
 
 
 class Owner(commands.Cog, command_attrs=dict(hidden=True)):
@@ -10,8 +11,10 @@ class Owner(commands.Cog, command_attrs=dict(hidden=True)):
 
     @commands.command(name="set")
     @commands.is_owner()
-    async def db_set_room_id(self, ctx, channel: discord.TextChannel, member: discord.Member):
-        
+    async def db_set_room_id(
+        self, ctx, channel: discord.TextChannel, member: discord.Member
+    ):
+
         user = await self.bot.datebase.fetchrow(
             """
             SELECT *
@@ -19,7 +22,8 @@ class Owner(commands.Cog, command_attrs=dict(hidden=True)):
              WHERE user_id = $1
                AND guild_id = $2
             """,
-            member.id, ctx.guild.id
+            member.id,
+            ctx.guild.id,
         )
         if not user:
             user = await self.bot.datebase.fetchrow(
@@ -28,7 +32,8 @@ class Owner(commands.Cog, command_attrs=dict(hidden=True)):
                      VALUES ($1, $2)
                   RETURNING *
                 """,
-                member.id, ctx.guild.id
+                member.id,
+                ctx.guild.id,
             )
 
         await self.bot.datebase.execute(
@@ -38,10 +43,14 @@ class Owner(commands.Cog, command_attrs=dict(hidden=True)):
              WHERE user_id = $2
                AND guild_id = $3
             """,
-            channel.id, member.id, ctx.guild.id
+            channel.id,
+            member.id,
+            ctx.guild.id,
         )
         await ctx.send(f"{channel.mention}の所有者は{member.display_name}にセットされました。")
-        await ctx.channel.set_permissions(member, manage_messages=True, manage_channels=True)
+        await ctx.channel.set_permissions(
+            member, manage_messages=True, manage_channels=True
+        )
 
 
 def setup(bot):

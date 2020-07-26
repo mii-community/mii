@@ -1,6 +1,7 @@
-from discord.ext import commands
 import os
 import traceback
+
+from discord.ext import commands
 
 
 class Load(commands.Cog, command_attrs=dict(hidden=True)):
@@ -29,7 +30,7 @@ class Load(commands.Cog, command_attrs=dict(hidden=True)):
 
     async def reload_cog(self, ctx, cog):
         try:
-            cog = cog.replace('.py', '')
+            cog = cog.replace(".py", "")
             self.bot.reload_extension("cogs." + cog)
             await ctx.send(f"{cog}.pyは正常にリロードされました。")
         except:

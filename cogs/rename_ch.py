@@ -1,5 +1,7 @@
-from discord.ext import commands
 import os
+
+from discord.ext import commands
+
 import launcher
 
 
@@ -12,8 +14,10 @@ class Rename_chCog(commands.Cog):
         """あなたの部屋/スレッドをリネームします。"""
         if ctx.author.bot:
             return
-        elif (ctx.channel.category.id != launcher.CAT_ROOM
-                and ctx.channel.category.id != launcher.CAT_THREAD):
+        elif (
+            ctx.channel.category.id != launcher.CAT_ROOM
+            and ctx.channel.category.id != launcher.CAT_THREAD
+        ):
             await ctx.send("ここでは実行できません。")
             return
 
@@ -24,7 +28,8 @@ class Rename_chCog(commands.Cog):
              WHERE user_id = $1
                AND guild_id = $2
             """,
-            ctx.author.id, ctx.guild.id
+            ctx.author.id,
+            ctx.guild.id,
         )
         if not user:
             user = await self.bot.datebase.fetchrow(
@@ -33,11 +38,13 @@ class Rename_chCog(commands.Cog):
                      VALUES ($1, $2)
                   RETURNING *
                 """,
-                ctx.author.id, ctx.guild.id
+                ctx.author.id,
+                ctx.guild.id,
             )
 
-        if (ctx.channel.id == user['room_id']
-                or ctx.channel.topic == "thread-author: " + str(ctx.author.id)):
+        if ctx.channel.id == user[
+            "room_id"
+        ] or ctx.channel.topic == "thread-author: " + str(ctx.author.id):
             await ctx.channel.edit(name=named)
             await ctx.send(f"{ctx.author.mention} チャンネル名を {named} に上書きしました。")
             return

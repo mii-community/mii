@@ -1,7 +1,10 @@
-from discord.ext import commands
-import discord
 import os
+
+import discord
+from discord.ext import commands
+
 import launcher
+
 
 class Room(commands.Cog):
     def __init__(self, bot):
@@ -23,7 +26,8 @@ class Room(commands.Cog):
              WHERE user_id = $1
                AND guild_id = $2
             """,
-            ctx.author.id, ctx.guild.id
+            ctx.author.id,
+            ctx.guild.id,
         )
         if not user:
             user = await self.bot.datebase.fetchrow(
@@ -32,7 +36,8 @@ class Room(commands.Cog):
                      VALUES ($1, $2)
                   RETURNING *
                 """,
-                ctx.author.id, ctx.guild.id
+                ctx.author.id,
+                ctx.guild.id,
             )
 
         cat_room = self.bot.get_channel(launcher.CAT_ROOM)
@@ -45,10 +50,10 @@ class Room(commands.Cog):
         async def new_room():
             named = f"{ctx.author.display_name}の部屋"
             new_room = await cat_room.create_text_channel(name=named)
-            await new_room.set_permissions(creator, manage_messages=True, manage_channels=True)
-            await ctx.send(
-                f"{ctx.author.mention} {new_room.mention} を作成しました。"
+            await new_room.set_permissions(
+                creator, manage_messages=True, manage_channels=True
             )
+            await ctx.send(f"{ctx.author.mention} {new_room.mention} を作成しました。")
             await self.bot.datebase.execute(
                 """
                 UPDATE mii
@@ -56,17 +61,20 @@ class Room(commands.Cog):
                  WHERE user_id = $2
                    AND guild_id = $3
                 """,
-                new_room.id, ctx.author.id, ctx.guild.id
+                new_room.id,
+                ctx.author.id,
+                ctx.guild.id,
             )
             return
 
         # ルームを持っていない場合: 新規作成
-        if not user['room_id']:
+        if not user["room_id"]:
             await new_room()
 
         for channel in ctx.guild.channels:
-            if ((channel.category != cat_room and channel.category != cat_room_archive)
-                    or (channel.id != user['room_id'])):
+            if (
+                channel.category != cat_room and channel.category != cat_room_archive
+            ) or (channel.id != user["room_id"]):
                 continue
 
             # ルームカテゴリーにある場合
@@ -82,10 +90,10 @@ class Room(commands.Cog):
                 await channel.edit(category=cat_room)
                 await channel.set_permissions(role_archive, overwrite=None)
                 await channel.set_permissions(role_member, read_messages=True)
-                await channel.set_permissions(creator, manage_messages=True, manage_channels=True)
-                await ctx.send(
-                    f"{ctx.author.mention} {channel.mention} をアーカイブから戻しました。"
+                await channel.set_permissions(
+                    creator, manage_messages=True, manage_channels=True
                 )
+                await ctx.send(f"{ctx.author.mention} {channel.mention} をアーカイブから戻しました。")
                 except_flag = False
                 return
 

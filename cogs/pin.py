@@ -1,5 +1,6 @@
-from discord.ext import commands
 import discord
+from discord.ext import commands
+
 
 class PinCog(commands.Cog):
     def __init__(self, bot):
@@ -26,8 +27,7 @@ class PinCog(commands.Cog):
         message = await channel.fetch_message(reaction_event.message_id)
         if not message.pinned:
             return
-        reaction = discord.utils.get(
-            message.reactions, emoji=reaction_event.emoji.name)
+        reaction = discord.utils.get(message.reactions, emoji=reaction_event.emoji.name)
         if reaction:
             return
         await message.unpin()

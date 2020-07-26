@@ -19,9 +19,7 @@ class PurgeCog(commands.Cog):
         try:
             num = int(num)
         except:
-            await channel.send(
-                f"不正な引数です。削除するメッセージ数か、全て削除する場合はallを入力してください。"
-            )
+            await channel.send(f"不正な引数です。削除するメッセージ数か、全て削除する場合はallを入力してください。")
             return
         await channel.purge(limit=num)
         await ctx.send("✅")

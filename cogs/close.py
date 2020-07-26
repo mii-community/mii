@@ -1,6 +1,8 @@
-from discord.ext import commands
 import discord
+from discord.ext import commands
+
 import launcher
+
 
 class CloseCog(commands.Cog):
     def __init__(self, bot):
@@ -11,13 +13,17 @@ class CloseCog(commands.Cog):
         """自分の作成した部屋/スレッドをアーカイブします。"""
         if ctx.author.bot:
             return
-        elif (ctx.channel.category.id != launcher.CAT_ROOM
-                and ctx.channel.category.id != launcher.CAT_THREAD):
+        elif (
+            ctx.channel.category.id != launcher.CAT_ROOM
+            and ctx.channel.category.id != launcher.CAT_THREAD
+        ):
             await ctx.send("ここでは実行できません。")
             return
-        elif (ctx.channel.topic != "room-author: " + str(ctx.author.id)
-                and ctx.channel.topic != "thread-author: " + str(ctx.author.id)
-                and (not ctx.author.guild_permissions.administrator)):
+        elif (
+            ctx.channel.topic != "room-author: " + str(ctx.author.id)
+            and ctx.channel.topic != "thread-author: " + str(ctx.author.id)
+            and (not ctx.author.guild_permissions.administrator)
+        ):
             await ctx.send("権限がありません。")
             return
 
@@ -33,7 +39,9 @@ class CloseCog(commands.Cog):
         elif ctx.channel.category == cat_thread:
             await ctx.channel.edit(category=cat_thread_archive)
         await ctx.channel.set_permissions(role_member, overwrite=None)
-        await ctx.channel.set_permissions(role_archive, read_messages=True, send_messages=False)
+        await ctx.channel.set_permissions(
+            role_archive, read_messages=True, send_messages=False
+        )
 
 
 def setup(bot):
