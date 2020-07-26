@@ -40,7 +40,7 @@ class Owner(commands.Cog, command_attrs=dict(hidden=True)):
             """,
             channel.id, member.id, ctx.guild.id
         )
-        await ctx.send(f"{mention.channel}の所有者は{member.display_name}にセットされました。")
+        await ctx.send(f"{channel.mention}の所有者は{member.display_name}にセットされました。")
         await ctx.channel.set_permissions(member, manage_messages=True, manage_channels=True)
 
 
