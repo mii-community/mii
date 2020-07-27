@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-import launcher
+import constant
 
 
 class CloseCog(commands.Cog):
@@ -14,8 +14,8 @@ class CloseCog(commands.Cog):
         if ctx.author.bot:
             return
         elif (
-            ctx.channel.category.id != launcher.CAT_ROOM
-            and ctx.channel.category.id != launcher.CAT_THREAD
+            ctx.channel.category.id != constant.CAT_ROOM
+            and ctx.channel.category.id != constant.CAT_THREAD
         ):
             await ctx.send("ここでは実行できません。")
             return
@@ -27,12 +27,12 @@ class CloseCog(commands.Cog):
             await ctx.send("権限がありません。")
             return
 
-        cat_room = self.bot.get_channel(launcher.CAT_ROOM)
-        cat_room_archive = self.bot.get_channel(launcher.CAT_ROOM_ARCHIVE)
-        cat_thread = self.bot.get_channel(launcher.CAT_THREAD)
-        cat_thread_archive = self.bot.get_channel(launcher.CAT_THREAD_ARCHIVE)
-        role_member = ctx.guild.get_role(launcher.ROLE_MEMBER)
-        role_archive = ctx.guild.get_role(launcher.ROLE_ARCHIVE)
+        cat_room = self.bot.get_channel(constant.CAT_ROOM)
+        cat_room_archive = self.bot.get_channel(constant.CAT_ROOM_ARCHIVE)
+        cat_thread = self.bot.get_channel(constant.CAT_THREAD)
+        cat_thread_archive = self.bot.get_channel(constant.CAT_THREAD_ARCHIVE)
+        role_member = ctx.guild.get_role(constant.ROLE_MEMBER)
+        role_archive = ctx.guild.get_role(constant.ROLE_ARCHIVE)
 
         if ctx.channel.category == cat_room:
             await ctx.channel.edit(category=cat_room_archive)

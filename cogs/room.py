@@ -3,7 +3,7 @@ import os
 import discord
 from discord.ext import commands
 
-import launcher
+import constant
 
 
 class Room(commands.Cog):
@@ -15,7 +15,7 @@ class Room(commands.Cog):
         """スレッドマスターで使うことであなたの部屋を作成します。"""
         if ctx.author.bot:
             return
-        elif ctx.channel.id != launcher.CH_ROOM_MASTER:
+        elif ctx.channel.id != constant.CH_ROOM_MASTER:
             await ctx.send("ここでは実行できません。")
             return
 
@@ -40,10 +40,10 @@ class Room(commands.Cog):
                 ctx.guild.id,
             )
 
-        cat_room = self.bot.get_channel(launcher.CAT_ROOM)
-        cat_room_archive = self.bot.get_channel(launcher.CAT_ROOM_ARCHIVE)
-        role_member = ctx.guild.get_role(launcher.ROLE_MEMBER)
-        role_archive = ctx.guild.get_role(launcher.ROLE_ARCHIVE)
+        cat_room = self.bot.get_channel(constant.CAT_ROOM)
+        cat_room_archive = self.bot.get_channel(constant.CAT_ROOM_ARCHIVE)
+        role_member = ctx.guild.get_role(constant.ROLE_MEMBER)
+        role_archive = ctx.guild.get_role(constant.ROLE_ARCHIVE)
         creator = ctx.guild.get_member(ctx.author.id)
         except_flag = True
 

@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 
+import constant
+
 
 class PinCog(commands.Cog):
     def __init__(self, bot):
@@ -10,7 +12,7 @@ class PinCog(commands.Cog):
     async def on_raw_reaction_add(self, reaction_event):
         if reaction_event.member.bot:
             return
-        if reaction_event.emoji.name != "\N{PUSHPIN}":
+        if reaction_event.emoji.name != constant.PIN_EMOJI:
             return
         channel = self.bot.get_channel(reaction_event.channel_id)
         message = await channel.fetch_message(reaction_event.message_id)
@@ -21,7 +23,7 @@ class PinCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, reaction_event):
-        if reaction_event.emoji.name != "\N{PUSHPIN}":
+        if reaction_event.emoji.name != constant.PIN_EMOJI:
             return
         channel = self.bot.get_channel(reaction_event.channel_id)
         message = await channel.fetch_message(reaction_event.message_id)
