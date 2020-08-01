@@ -8,7 +8,7 @@ class Rename_chCog(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def rename(self, ctx, named):
+    async def rename(self, ctx, *, named):
         """あなたの部屋/スレッドをリネームします。"""
         if ctx.author.bot:
             return
