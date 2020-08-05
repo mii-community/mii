@@ -17,7 +17,7 @@ class Rename_chCog(commands.Cog):
             await ctx.send("ここでは実行できません。")
             return
 
-        user = await self.bot.datebase.fetchrow(
+        user = await self.bot.database.fetchrow(
             """
             SELECT *
               FROM mii
@@ -27,7 +27,7 @@ class Rename_chCog(commands.Cog):
             ctx.author.id, ctx.guild.id
         )
         if not user:
-            user = await self.bot.datebase.fetchrow(
+            user = await self.bot.database.fetchrow(
                 """
                 INSERT INTO mii (user_id, guild_id)
                      VALUES ($1, $2)

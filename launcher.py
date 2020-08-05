@@ -33,7 +33,7 @@ async def create_db_pool():
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
     # --ここまでのコードがないと接続ができない。
-    bot.datebase = await asyncpg.create_pool(os.getenv("DATABASE_URL"), ssl=ctx)
+    return await asyncpg.create_pool(os.getenv("DATABASE_URL"), ssl=ctx)
 
 
 class MyBot(commands.Bot):
@@ -47,6 +47,7 @@ class MyBot(commands.Bot):
                 traceback.print_exc()
 
     async def on_ready(self):
+        self.database = await create_db_pool()
         print("logged in as:", self.user.name, self.user.id)
 
 
