@@ -1,6 +1,6 @@
 from discord.ext import commands
 import os
-import launcher
+import constant
 
 
 class Rename_chCog(commands.Cog):
@@ -12,8 +12,8 @@ class Rename_chCog(commands.Cog):
         """あなたの部屋/スレッドをリネームします。"""
         if ctx.author.bot:
             return
-        elif (ctx.channel.category.id != launcher.CAT_ROOM
-                and ctx.channel.category.id != launcher.CAT_THREAD):
+        elif (ctx.channel.category.id != constant.CAT_ROOM
+                and ctx.channel.category.id != constant.CAT_THREAD):
             await ctx.send("ここでは実行できません。")
             return
 
