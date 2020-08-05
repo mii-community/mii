@@ -7,8 +7,13 @@ class Load(commands.Cog, command_attrs=dict(hidden=True)):
     def __init__(self, bot):
         self.bot = bot
 
+    async def cog_check(self, ctx):
+        if not await ctx.bot.is_owner(ctx.author):
+            ctx.send("権限がありません。")
+            return False
+        return True
+
     @commands.command()
-    @commands.is_owner()
     async def load(self, ctx, cog):
         try:
             self.bot.load_extension("cogs." + cog)
@@ -18,7 +23,6 @@ class Load(commands.Cog, command_attrs=dict(hidden=True)):
             traceback.print_exc()
 
     @commands.command()
-    @commands.is_owner()
     async def unload(self, ctx, cog):
         try:
             self.bot.unload_extension("cogs." + cog)
@@ -37,7 +41,6 @@ class Load(commands.Cog, command_attrs=dict(hidden=True)):
             traceback.print_exc()
 
     @commands.command()
-    @commands.is_owner()
     async def reload(self, ctx, cog):
         if cog == "all":
             for cog in [cogs for cogs in os.listdir("./cogs") if cogs.endswith(".py")]:
