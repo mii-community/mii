@@ -5,26 +5,26 @@ class PurgeCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def purge(self, ctx, num):
-        """!purge <number> で指定された数のメッセージを一括削除します。"""
-        channel = ctx.channel
-        if not ctx.author.permissions_in(channel).manage_messages:
-            await channel.send(f"メッセージ管理の権限がありません。")
+    async def purging(self, ctx, limit):
+        if not ctx.author.permissions_in(ctx.channel).manage_messages:
+            await ctx.send("メッセージ管理の権限がありません。")
             return
-        if num == "all":
-            await channel.purge(limit=None)
-            await ctx.send("✅")
-            return
-        try:
-            num = int(num)
-        except:
-            await channel.send(
-                f"不正な引数です。削除するメッセージ数か、全て削除する場合はallを入力してください。"
-            )
-            return
-        await channel.purge(limit=num)
+        await ctx.channel.purge(limit=limit)
         await ctx.send("✅")
+
+    @commands.command(name="purge")
+    async def purge_messages(self, ctx, num):
+        """!purge <number> で指定された数のメッセージを一括削除します。"""
+        if not num.isdecimal():
+            await ctx.send("数値を入力してください。")
+            return
+        num = int(num)
+        await self.purging(ctx, num + 1)
+
+    @commands.command(name="purgeall")
+    async def purge_all_messages(self, ctx):
+        """全てのメッセージを一括削除します。"""
+        await self.purging(ctx, None)
 
 
 def setup(bot):
