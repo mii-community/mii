@@ -4,6 +4,7 @@ import asyncpg
 from discord.ext import commands
 
 import os
+import glob
 import traceback
 
 import dotenv
@@ -38,11 +39,10 @@ async def create_db_pool():
 class MyBot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix=commands.when_mentioned_or("!"), help_command=Help())
-        for cog in [cogs for cogs in os.listdir("./cogs") if cogs.endswith(".py")]:
+        for cog in [cog.replace("/", ".").replace(".py", "") for cog in glob.glob("cogs/*.py")]:
             try:
-                cog = cog.replace('.py', '')
-                self.load_extension("cogs." + cog)
-                print(f"{cog}.pyは正常に読み込まれました。")
+                self.load_extension(cog)
+                print(f"{cog}は正常に読み込まれました。")
             except:
                 traceback.print_exc()
 
