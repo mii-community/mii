@@ -8,37 +8,66 @@ class ThreadCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    async def set_admin(self, author_id, channel_id):
+        await self.bot.database.execute(
+            """
+            INSERT INTO mii_channels (channel_id, author_id, channel_type)
+                 VALUES ($1, $2, $3)
+              RETURNING *
+            """,
+            channel_id, author_id, "thread"
+        )
+        return
+
+    async def update_admin(self, author_id, channel_id):
+        await self.bot.database.execute(
+            """
+            UPDATE mii_channels
+               SET author_id = $1
+             WHERE channel_id = $2
+               AND channel_type = $3
+            """,
+            author_id, channel_id, "thread"
+        )
+        return
+
     @commands.Cog.listener()
     async def on_message(self, message):
         if (message.author.bot
                 or message.channel.category.id != constant.CAT_THREAD):
             return
-        elif message.channel.id == constant.CH_THREAD_MASTER:
-            named = message.content
-            matched = discord.utils.get(message.guild.channels, name=named)
-            if not matched:
-                new_channel = await self.bot.get_channel(constant.CAT_THREAD).create_text_channel(name=named)
-                await new_channel.edit(topic="thread-author: " + str(message.author.id))
-                await message.channel.send(
-                    f"{message.author.mention} {new_channel.mention} を作成しました。"
-                )
-            elif matched.category.id == constant.CAT_THREAD:
-                await message.channel.send(
-                    f"{message.author.mention} {matched.mention} はもう作られています。"
-                )
-            elif matched.category.id == constant.CAT_THREAD_ARCHIVE:
-                await matched.edit(category=self.bot.get_channel(constant.CAT_THREAD))
-                role = message.guild.get_role(constant.ROLE_ARCHIVE)
-                await matched.set_permissions(role, overwrite=None)
-                role = message.guild.get_role(constant.ROLE_MEMBER)
-                await matched.set_permissions(role, read_messages=True)
-                await matched.edit(topic="thread-author: " + str(message.author.id))
-                await message.channel.send(
-                    f"{message.author.mention} {matched.mention} をアーカイブから戻しました。スレッドの作者は上書きされました。"
-                )
-        else:
-            position = self.bot.get_channel(constant.CH_THREAD_MASTER).position + 1
+
+        elif message.channel.id != constant.CH_THREAD_MASTER:
+            position = self.bot.get_channel(
+                constant.CH_THREAD_MASTER).position + 1
             await message.channel.edit(position=position)
+            return
+
+        # 簡易的なCH名の重複チェック
+        name = message.content
+        ch_thread = discord.utils.get(message.guild.channels, name=name)
+        cat_thread = self.bot.get_channel(constant.CAT_THREAD)
+        # 同名CHがない場合
+        if not ch_thread:
+            new_thread = await cat_thread.create_text_channel(name=name)
+            await message.channel.send(f"{message.author.mention} {new_thread.mention} を作成しました。")
+            await self.set_admin(message.author.id, new_thread.id)
+            return
+
+        # 同名CHがスレッドカテゴリーにある場合
+        if ch_thread.category.id == constant.CAT_THREAD:
+            text = "はもう作られています。"
+        # 同名CHがアーカイブカテゴリーにある場合
+        elif ch_thread.category.id == constant.CAT_THREAD_ARCHIVE:
+            text = "をアーカイブから戻しました。"
+            role_archive = message.guild.get_role(constant.ROLE_ARCHIVE)
+            role_member = message.guild.get_role(constant.ROLE_MEMBER)
+            await ch_thread.edit(category=cat_thread)
+            await ch_thread.set_permissions(role_archive, overwrite=None)
+            await ch_thread.set_permissions(role_member, read_messages=True)
+            await self.update_admin(message.author.id, ch_thread.id)
+        # おわりに
+        await message.channel.send(f"{message.author.mention} {ch_thread.mention} {text}")
 
 
 def setup(bot):
