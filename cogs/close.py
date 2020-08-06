@@ -15,9 +15,20 @@ class CloseCog(commands.Cog):
                   or ctx.channel.category.id == constant.CAT_THREAD):
             await ctx.send("ここでは実行できません。")
             return
-        elif not (ctx.channel.topic == f"room-author: {ctx.author.id}"
-                  or ctx.channel.topic == f"thread-author: + {ctx.author.id}"
-                  or ctx.author.guild_permissions.administrator):
+
+        ch_data = await self.bot.database.fetchrow(
+            """
+            SELECT *
+              FROM mii_channels
+             WHERE channel_id = $1
+            """,
+            ctx.channel.id
+        )
+
+        if not ch_data:
+            await ctx.send("データが存在しませんでした。")
+            return
+        elif ctx.author.id != ch_data["author_id"]:
             await ctx.send("権限がありません。")
             return
 
