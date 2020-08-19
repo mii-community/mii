@@ -10,9 +10,8 @@ class TweetCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.channel.category.id != launcher.CH_TWEET:
+        if message.channel.id != launcher.CH_TWEET:
             return
-
 
 def setup(bot):
     bot.add_cog(TweetCog(bot))
