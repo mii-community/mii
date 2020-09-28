@@ -1,6 +1,7 @@
 import os
 import ssl
 import traceback
+import pathlib
 
 import asyncpg
 from discord.ext import commands
@@ -22,11 +23,10 @@ class MyBot(commands.Bot):
         super().__init__(
             command_prefix=commands.when_mentioned_or("!"), help_command=Help()
         )
-        for cog in [cogs for cogs in os.listdir("./cogs") if cogs.endswith(".py")]:
+        for cog in pathlib.Path("cogs/").glob("*.py"):
             try:
-                cog = cog.replace(".py", "")
-                self.load_extension("cogs." + cog)
-                print(f"{cog}.pyは正常に読み込まれました。")
+                self.load_extension("cogs." + cog.stem)
+                print(f"{cog.stem}.pyは正常に読み込まれました。")
             except:
                 traceback.print_exc()
 
@@ -55,5 +55,5 @@ class Help(commands.DefaultHelpCommand):
 
 if __name__ == "__main__":
     bot = MyBot()
-    bot.loop.run_until_complete(bot.__ainit__())
+    # bot.loop.run_until_complete(bot.__ainit__())
     bot.run(constant.DISCORD_BOT_TOKEN)
