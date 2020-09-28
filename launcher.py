@@ -8,13 +8,13 @@ from discord.ext import commands
 import constant
 
 
-async def create_db_pool():
+def get_db_context():
     # 残念なことに、ここから--
     ctx = ssl.create_default_context(cafile="")
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
     # --ここまでのコードがないと接続ができない。
-    bot.datebase = await asyncpg.create_pool(constant.DATABASE_URL, ssl=ctx)
+    return ctx
 
 
 class MyBot(commands.Bot):
@@ -29,6 +29,11 @@ class MyBot(commands.Bot):
                 print(f"{cog}.pyは正常に読み込まれました。")
             except:
                 traceback.print_exc()
+
+    async def __ainit__(self):
+        self.datebase = await asyncpg.create_pool(
+            constant.DATABASE_URL, ssl=get_db_context()
+        )
 
     async def on_ready(self):
         print("logged in as:", self.user.name, self.user.id)
@@ -50,5 +55,5 @@ class Help(commands.DefaultHelpCommand):
 
 if __name__ == "__main__":
     bot = MyBot()
-    bot.loop.run_until_complete(create_db_pool())
+    bot.loop.run_until_complete(bot.__ainit__())
     bot.run(constant.DISCORD_BOT_TOKEN)
