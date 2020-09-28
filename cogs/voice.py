@@ -64,7 +64,7 @@ class VoiceCog(commands.Cog):
             channel = self.bot.get_channel(constant.CH_VOICE_TEXT)
             await channel.edit(name="vc-text")
             embed = discord.Embed(
-                description=f"接続人数が0になったのでチャンネル名をリセットしました。", colour=0x000000
+                description="接続人数が0になったのでチャンネル名をリセットしました。", colour=0x000000
             )
             await channel.send(embed=embed, delete_after=60)
 
