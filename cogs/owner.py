@@ -15,7 +15,7 @@ class Owner(commands.Cog, command_attrs=dict(hidden=True)):
         self, ctx, channel: discord.TextChannel, member: discord.Member
     ):
 
-        user = await self.bot.datebase.fetchrow(
+        user = await self.bot.database.fetchrow(
             """
             SELECT *
               FROM mii
@@ -26,7 +26,7 @@ class Owner(commands.Cog, command_attrs=dict(hidden=True)):
             ctx.guild.id,
         )
         if not user:
-            user = await self.bot.datebase.fetchrow(
+            user = await self.bot.database.fetchrow(
                 """
                 INSERT INTO mii (user_id, guild_id)
                      VALUES ($1, $2)
@@ -36,7 +36,7 @@ class Owner(commands.Cog, command_attrs=dict(hidden=True)):
                 ctx.guild.id,
             )
 
-        await self.bot.datebase.execute(
+        await self.bot.database.execute(
             """
             UPDATE mii
                SET room_id = $1

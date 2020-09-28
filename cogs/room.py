@@ -19,7 +19,7 @@ class Room(commands.Cog):
             await ctx.send("ここでは実行できません。")
             return
 
-        user = await self.bot.datebase.fetchrow(
+        user = await self.bot.database.fetchrow(
             """
             SELECT *
               FROM mii
@@ -30,7 +30,7 @@ class Room(commands.Cog):
             ctx.guild.id,
         )
         if not user:
-            user = await self.bot.datebase.fetchrow(
+            user = await self.bot.database.fetchrow(
                 """
                 INSERT INTO mii (user_id, guild_id)
                      VALUES ($1, $2)
@@ -54,7 +54,7 @@ class Room(commands.Cog):
                 creator, manage_messages=True, manage_channels=True
             )
             await ctx.send(f"{ctx.author.mention} {new_room.mention} を作成しました。")
-            await self.bot.datebase.execute(
+            await self.bot.database.execute(
                 """
                 UPDATE mii
                    SET room_id = $1

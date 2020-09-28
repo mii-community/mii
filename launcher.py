@@ -31,7 +31,7 @@ class MyBot(commands.Bot):
                 traceback.print_exc()
 
     async def __ainit__(self):
-        self.datebase = await asyncpg.create_pool(
+        self.database = await asyncpg.create_pool(
             constant.DATABASE_URL, ssl=get_db_context()
         )
 
