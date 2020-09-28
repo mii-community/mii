@@ -41,9 +41,7 @@ class MyBot(commands.Bot):
 
 class Help(commands.DefaultHelpCommand):
     def __init__(self):
-        super().__init__()
-        self.no_category = "その他"
-        self.command_attrs["help"] = "コマンド一覧と簡単な説明を表示"
+        super().__init__(no_category="その他", command_attrs={"help": "コマンド一覧と簡単な説明を表示"})
 
     def get_ending_note(self):
         return (
