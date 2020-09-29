@@ -19,15 +19,8 @@ class Rename_chCog(commands.Cog):
             await ctx.send("ここでは実行できません。")
             return
 
-        user = await self.bot.database.fetchrow(
-            """
-            SELECT *
-              FROM mii
-             WHERE user_id = $1
-               AND guild_id = $2
-            """,
-            ctx.author.id,
-            ctx.guild.id,
+        user = await self.bot.database.fetch_row(
+            constant.TABLE_NAME, channel_id=ctx.channel.id
         )
         if not user:
             user = await self.bot.database.fetchrow(

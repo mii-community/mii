@@ -15,13 +15,8 @@ class CloseCog(commands.Cog):
             await ctx.send("ここでは実行できません。")
             return
 
-        ch_data = await self.bot.database.fetchrow(
-            """
-            SELECT *
-              FROM mii_channels
-             WHERE channel_id = $1
-            """,
-            ctx.channel.id,
+        ch_data = await self.bot.database.fetch_row(
+            constant.TABLE_NAME, channel_id=ctx.channel.id
         )
 
         if not ch_data:

@@ -11,29 +11,20 @@ class ThreadCog(commands.Cog):
         self.bot = bot
 
     async def set_admin(self, author_id, channel_id):
-        await self.bot.database.execute(
-            """
-            INSERT INTO mii_channels (channel_id, author_id, channel_type)
-                 VALUES ($1, $2, $3)
-              RETURNING *
-            """,
-            channel_id,
-            author_id,
-            "thread",
+        await self.bot.database.inser(
+            constant.TABLE_NAME,
+            channel_id=channel_id,
+            author_id=author_id,
+            channel_type="thread",
         )
         return
 
     async def update_admin(self, author_id, channel_id):
-        await self.bot.database.execute(
-            """
-            UPDATE mii_channels
-               SET author_id = $1
-             WHERE channel_id = $2
-               AND channel_type = $3
-            """,
-            author_id,
-            channel_id,
-            "thread",
+        await self.bot.database.update(
+            constant.TABLE_NAME,
+            {"author_id": author_id},
+            channel_id=channel_id,
+            channel_type="thread",
         )
         return
 

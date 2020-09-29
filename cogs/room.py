@@ -19,15 +19,8 @@ class Room(commands.Cog):
             await ctx.send("ここでは実行できません。")
             return
 
-        ch_data = await self.bot.database.fetchrow(
-            """
-            SELECT *
-              FROM mii_channels
-             WHERE author_id = $1
-               AND channel_type = $2
-            """,
-            ctx.author.id,
-            "room",
+        ch_data = await self.bot.database.fetch_row(
+            constant.TABLE_NAME, author_id=ctx.author.id, channel_type="room"
         )
 
         creator = ctx.guild.get_member(ctx.author.id)
@@ -40,15 +33,11 @@ class Room(commands.Cog):
                 creator, manage_messages=True, manage_channels=True
             )
             await ctx.send(f"{ctx.author.mention} {new_room.mention} を作成しました。")
-            await self.bot.database.execute(
-                """
-                INSERT INTO mii_channels (channel_id, author_id, channel_type)
-                     VALUES ($1, $2, $3)
-                  RETURNING *
-                """,
-                new_room.id,
-                ctx.author.id,
-                "room",
+            await self.bot.database.insert(
+                constant.TABLE_NAME,
+                channel_id=new_room.id,
+                author_id=ctx.author.id,
+                channel_type="room",
             )
             return
 
