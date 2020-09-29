@@ -1,6 +1,7 @@
 from discord.ext import commands
-import discord
-import launcher
+
+import constant
+
 
 class CloseCog(commands.Cog):
     def __init__(self, bot):
@@ -11,29 +12,33 @@ class CloseCog(commands.Cog):
         """自分の作成した部屋/スレッドをアーカイブします。"""
         if ctx.author.bot:
             return
-        elif (ctx.channel.category.id != launcher.CAT_ROOM
-                and ctx.channel.category.id != launcher.CAT_THREAD):
+        elif ctx.channel.category.id not in (constant.CAT_ROOM, constant.CAT_THREAD):
             await ctx.send("ここでは実行できません。")
             return
-        elif (ctx.channel.topic != "room-author: " + str(ctx.author.id)
-                and ctx.channel.topic != "thread-author: " + str(ctx.author.id)
-                and (not ctx.author.guild_permissions.administrator)):
+
+        ch_data = await self.bot.database.fetch_row(
+            constant.TABLE_NAME, channel_id=ctx.channel.id
+        )
+
+        if not ch_data:
+            await ctx.send("データが存在しませんでした。")
+            return
+        elif ctx.author.id != ch_data["author_id"]:
             await ctx.send("権限がありません。")
             return
 
-        cat_room = self.bot.get_channel(launcher.CAT_ROOM)
-        cat_room_archive = self.bot.get_channel(launcher.CAT_ROOM_ARCHIVE)
-        cat_thread = self.bot.get_channel(launcher.CAT_THREAD)
-        cat_thread_archive = self.bot.get_channel(launcher.CAT_THREAD_ARCHIVE)
-        role_member = ctx.guild.get_role(launcher.ROLE_MEMBER)
-        role_archive = ctx.guild.get_role(launcher.ROLE_ARCHIVE)
+        if ctx.channel.category.id == constant.CAT_ROOM:
+            goto_cat = self.bot.get_channel(constant.CAT_ROOM_ARCHIVE)
+        elif ctx.channel.category.id == constant.CAT_THREAD:
+            goto_cat = self.bot.get_channel(constant.CAT_THREAD_ARCHIVE)
+        await ctx.channel.edit(category=goto_cat)
 
-        if ctx.channel.category == cat_room:
-            await ctx.channel.edit(category=cat_room_archive)
-        elif ctx.channel.category == cat_thread:
-            await ctx.channel.edit(category=cat_thread_archive)
+        role_member = ctx.guild.get_role(constant.ROLE_MEMBER)
+        role_archive = ctx.guild.get_role(constant.ROLE_ARCHIVE)
         await ctx.channel.set_permissions(role_member, overwrite=None)
-        await ctx.channel.set_permissions(role_archive, read_messages=True, send_messages=False)
+        await ctx.channel.set_permissions(
+            role_archive, read_messages=True, send_messages=False
+        )
 
 
 def setup(bot):
