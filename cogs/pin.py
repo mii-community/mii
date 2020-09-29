@@ -29,8 +29,8 @@ class PinCog(commands.Cog):
         message = await channel.fetch_message(reaction_event.message_id)
         if not message.pinned:
             return
-        reaction = discord.utils.get(message.reactions, emoji=reaction_event.emoji.name)
-        if reaction:
+        pin_reaction = discord.utils.get(message.reactions, emoji=constant.PIN_EMOJI)
+        if pin_reaction:
             return
         await message.unpin()
         embed = discord.Embed(
