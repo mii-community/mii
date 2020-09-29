@@ -1,7 +1,7 @@
 from discord.ext import commands
 import discord
 import os
-import launcher
+import constant
 
 
 class TweetCog(commands.Cog):
@@ -11,7 +11,7 @@ class TweetCog(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         # つぶやきchのログを、古いものから、指定件数分までだけが残るように削除
-        if message.channel.id != launcher.CH_TWEET:
+        if message.channel.id != constant.CH_TWEET:
             return
 
         # メッセージ数(num)を取得
@@ -30,7 +30,7 @@ class TweetCog(commands.Cog):
         arrayMsg = []
         async for msg in message.channel.history(limit=num - log, oldest_first=True):
             arrayMsg.append(msg)
-        await self.bot.get_channel(launcher.CH_TWEET).delete_messages(arrayMsg)
+        await self.bot.get_channel(constant.CH_TWEET).delete_messages(arrayMsg)
 
 
 def setup(bot):
