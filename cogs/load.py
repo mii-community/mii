@@ -1,7 +1,8 @@
-from discord.ext import commands
 import os
+import pathlib
 import traceback
-import glob
+
+from discord.ext import commands
 
 
 class Load(commands.Cog, command_attrs=dict(hidden=True)):
@@ -32,23 +33,24 @@ class Load(commands.Cog, command_attrs=dict(hidden=True)):
             await ctx.send(f"{cog}.pyはアンロードできませんでした。ログを確認してください。")
             traceback.print_exc()
 
-    @commands.command(name="reload")
-    async def reload_cog(self, ctx, cog):
-        try:
-            self.bot.reload_extension("cogs." + cog)
-            await ctx.send(f"{cog}は正常にリロードされました。")
-        except:
-            await ctx.send(f"{cog}.pyはリロードできませんでした。ログを確認してください。")
-
-    @commands.command(name="reloadall")
-    async def reload_all_cogs(self, ctx):
-        for cog in [cog.replace("/", ".").replace(".py", "") for cog in glob.glob("cogs/*.py")]:
+    @commands.command()
+    @commands.is_owner()
+    async def reload(self, ctx, cog):
+        async def reload_cog(cog):
             try:
-                self.bot.reload_extension(cog)
-                await ctx.send(f"{cog}は正常に読み込まれました。")
+                self.bot.reload_extension("cogs." + cog)
+                await ctx.send(f"{cog}.pyは正常にリロードされました。")
             except:
+                await ctx.send(f"{cog}.pyはリロードできませんでした。ログを確認してください。")
                 traceback.print_exc()
-        await ctx.send("すべて終わりました。")
+            return
+
+        if cog == "all":
+            for cog in pathlib.Path("cogs/").glob("*.py"):
+                await reload_cog(cog.stem)
+            await ctx.send("全て終わりました。")
+            return
+        await reload_cog(cog)
 
 
 def setup(bot):

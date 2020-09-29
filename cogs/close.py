@@ -1,4 +1,5 @@
 from discord.ext import commands
+
 import constant
 
 
@@ -11,18 +12,12 @@ class CloseCog(commands.Cog):
         """自分の作成した部屋/スレッドをアーカイブします。"""
         if ctx.author.bot:
             return
-        elif not (ctx.channel.category.id == constant.CAT_ROOM
-                  or ctx.channel.category.id == constant.CAT_THREAD):
+        elif ctx.channel.category.id not in (constant.CAT_ROOM, constant.CAT_THREAD):
             await ctx.send("ここでは実行できません。")
             return
 
-        ch_data = await self.bot.database.fetchrow(
-            """
-            SELECT *
-              FROM mii_channels
-             WHERE channel_id = $1
-            """,
-            ctx.channel.id
+        ch_data = await self.bot.database.fetch_row(
+            constant.TABLE_NAME, channel_id=ctx.channel.id
         )
 
         if not ch_data:
@@ -37,10 +32,13 @@ class CloseCog(commands.Cog):
         elif ctx.channel.category.id == constant.CAT_THREAD:
             goto_cat = self.bot.get_channel(constant.CAT_THREAD_ARCHIVE)
         await ctx.channel.edit(category=goto_cat)
+
         role_member = ctx.guild.get_role(constant.ROLE_MEMBER)
         role_archive = ctx.guild.get_role(constant.ROLE_ARCHIVE)
         await ctx.channel.set_permissions(role_member, overwrite=None)
-        await ctx.channel.set_permissions(role_archive, read_messages=True, send_messages=False)
+        await ctx.channel.set_permissions(
+            role_archive, read_messages=True, send_messages=False
+        )
 
 
 def setup(bot):

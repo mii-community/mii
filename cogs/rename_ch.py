@@ -1,4 +1,5 @@
 from discord.ext import commands
+
 import constant
 
 
@@ -12,32 +13,15 @@ class Rename_chCog(commands.Cog):
         if ctx.author.bot:
             return
 
-        elif not (ctx.channel.category.id == constant.CAT_ROOM
-                  or ctx.channel.category.id == constant.CAT_THREAD):
+        elif ctx.channel.category.id not in (constant.CAT_ROOM, constant.CAT_THREAD):
             await ctx.send("ここでは実行できません。")
             return
 
-        user = await self.bot.database.fetchrow(
-            """
-            SELECT *
-              FROM mii
-             WHERE user_id = $1
-               AND guild_id = $2
-            """,
-            ctx.author.id, ctx.guild.id
+        ch_data = await self.bot.database.fetch_row(
+            constant.TABLE_NAME, channel_id=ctx.channel.id
         )
-        if not user:
-            user = await self.bot.database.fetchrow(
-                """
-                INSERT INTO mii (user_id, guild_id)
-                     VALUES ($1, $2)
-                  RETURNING *
-                """,
-                ctx.author.id, ctx.guild.id
-            )
 
-        if not (ctx.channel.id == user['room_id']
-                and ctx.channel.topic == f"thread-author: {ctx.author.id}"):
+        if ch_data["author_id"] != ctx.author.id:
             await ctx.send("権限がありません。")
             return
         await ctx.channel.edit(name=name)

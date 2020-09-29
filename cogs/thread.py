@@ -1,6 +1,8 @@
-from discord.ext import commands
-import discord
 import os
+
+import discord
+from discord.ext import commands
+
 import constant
 
 
@@ -9,37 +11,30 @@ class ThreadCog(commands.Cog):
         self.bot = bot
 
     async def set_admin(self, author_id, channel_id):
-        await self.bot.database.execute(
-            """
-            INSERT INTO mii_channels (channel_id, author_id, channel_type)
-                 VALUES ($1, $2, $3)
-              RETURNING *
-            """,
-            channel_id, author_id, "thread"
+        await self.bot.database.insert(
+            constant.TABLE_NAME,
+            channel_id=channel_id,
+            author_id=author_id,
+            channel_type="thread",
         )
         return
 
     async def update_admin(self, author_id, channel_id):
-        await self.bot.database.execute(
-            """
-            UPDATE mii_channels
-               SET author_id = $1
-             WHERE channel_id = $2
-               AND channel_type = $3
-            """,
-            author_id, channel_id, "thread"
+        await self.bot.database.update(
+            constant.TABLE_NAME,
+            {"author_id": author_id},
+            channel_id=channel_id,
+            channel_type="thread",
         )
         return
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if (message.author.bot
-                or message.channel.category.id != constant.CAT_THREAD):
+        if message.author.bot or message.channel.category.id != constant.CAT_THREAD:
             return
 
         elif message.channel.id != constant.CH_THREAD_MASTER:
-            position = self.bot.get_channel(
-                constant.CH_THREAD_MASTER).position + 1
+            position = self.bot.get_channel(constant.CH_THREAD_MASTER).position + 1
             await message.channel.edit(position=position)
             return
 
@@ -50,7 +45,9 @@ class ThreadCog(commands.Cog):
         # 同名CHがない場合
         if not ch_thread:
             new_thread = await cat_thread.create_text_channel(name=name)
-            await message.channel.send(f"{message.author.mention} {new_thread.mention} を作成しました。")
+            await message.channel.send(
+                f"{message.author.mention} {new_thread.mention} を作成しました。"
+            )
             await self.set_admin(message.author.id, new_thread.id)
             return
 
@@ -67,7 +64,9 @@ class ThreadCog(commands.Cog):
             await ch_thread.set_permissions(role_member, read_messages=True)
             await self.update_admin(message.author.id, ch_thread.id)
         # おわりに
-        await message.channel.send(f"{message.author.mention} {ch_thread.mention} {text}")
+        await message.channel.send(
+            f"{message.author.mention} {ch_thread.mention} {text}"
+        )
 
 
 def setup(bot):
