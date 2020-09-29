@@ -13,16 +13,14 @@ class CloseCog(commands.Cog):
         """自分の作成した部屋/スレッドをアーカイブします。"""
         if ctx.author.bot:
             return
-        elif (
-            ctx.channel.category.id != constant.CAT_ROOM
-            and ctx.channel.category.id != constant.CAT_THREAD
-        ):
+        elif ctx.channel.category.id not in (constant.CAT_ROOM, constant.CAT_THREAD):
             await ctx.send("ここでは実行できません。")
             return
+
         elif (
-            ctx.channel.topic != "room-author: " + str(ctx.author.id)
-            and ctx.channel.topic != "thread-author: " + str(ctx.author.id)
-            and (not ctx.author.guild_permissions.administrator)
+            ctx.channel.topic
+            not in (f"room-author: {ctx.author.id}", f"thread-author: {ctx.author.id}",)
+            or not ctx.author.guild_permissions.administrator
         ):
             await ctx.send("権限がありません。")
             return
