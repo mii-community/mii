@@ -16,7 +16,7 @@ class Rename_chCog(commands.Cog):
             await ctx.send("ここでは実行できません。")
             return
 
-        user = await self.bot.database.fetch_row(
+        ch_data = await self.bot.database.fetch_row(
             constant.TABLE_NAME, channel_id=ctx.channel.id
         )
         if not user:
@@ -30,10 +30,7 @@ class Rename_chCog(commands.Cog):
                 ctx.guild.id,
             )
 
-        if not (
-            ctx.channel.id == user["room_id"]
-            and ctx.channel.topic == f"thread-author: {ctx.author.id}"
-        ):
+        if ch_data["author_id"] != ctx.author.id:
             await ctx.send("権限がありません。")
             return
         await ctx.channel.edit(name=name)
