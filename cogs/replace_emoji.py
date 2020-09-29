@@ -11,7 +11,7 @@ async def get_webhook(message):
     for webhook in webhooks:
         if webhook.name == constant.WEBHOOK_NAME:
             return webhook
-    return await message.channel.create_webhook(name="mii")
+    return await message.channel.create_webhook(name=constant.WEBHOOK_NAME)
 
 
 def get_emoji_id(message, emoji_alias):
