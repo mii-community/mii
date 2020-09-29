@@ -1,21 +1,11 @@
 import os
-import ssl
 import traceback
 import pathlib
 
-import asyncpg
 from discord.ext import commands
 
 import constant
-
-
-def get_db_context():
-    # 残念なことに、ここから--
-    ctx = ssl.create_default_context(cafile="")
-    ctx.check_hostname = False
-    ctx.verify_mode = ssl.CERT_NONE
-    # --ここまでのコードがないと接続ができない。
-    return ctx
+from database import Database
 
 
 class MyBot(commands.Bot):
@@ -31,9 +21,8 @@ class MyBot(commands.Bot):
                 traceback.print_exc()
 
     async def __ainit__(self):
-        self.database = await asyncpg.create_pool(
-            constant.DATABASE_URL, ssl=get_db_context()
-        )
+        self.database = Database()
+        await self.database.__ainit__()
 
     async def on_ready(self):
         print("logged in as:", self.user.name, self.user.id)
@@ -53,5 +42,5 @@ class Help(commands.DefaultHelpCommand):
 
 if __name__ == "__main__":
     bot = MyBot()
-    # bot.loop.run_until_complete(bot.__ainit__())
+    bot.loop.run_until_complete(bot.__ainit__())
     bot.run(constant.DISCORD_BOT_TOKEN)
