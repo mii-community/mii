@@ -1,6 +1,6 @@
 import os
-import traceback
 import pathlib
+import traceback
 
 from discord.ext import commands
 

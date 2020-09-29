@@ -1,8 +1,8 @@
-import os
-import glob
-import traceback
-import pathlib
 import asyncio
+import glob
+import os
+import pathlib
+import traceback
 
 from discord.ext import commands
 
