@@ -14,13 +14,13 @@ async def get_webhook(message):
     return await message.channel.create_webhook(name=constant.WEBHOOK_NAME)
 
 
-def get_emoji_id(message, emoji_alias):
-    get_emoji = discord.utils.get(message.guild.emojis, name=emoji_alias)
+def get_emoji_id(guild, emoji_alias):
+    get_emoji = discord.utils.get(guild.emojis, name=emoji_alias)
     emoji_id = get_emoji.id
     return emoji_id
 
 
-def get_replaced_char(message, char):
+def get_replaced_char(guild, char):
     other_dict = {"309A": "ﾟ ", "3099": "ﾞ "}
 
     if ligature := unicodedata.decomposition(char):
@@ -34,7 +34,7 @@ def get_replaced_char(message, char):
     else:
         return char
 
-    emoji_id = get_emoji_id(message, emoji_alias)
+    emoji_id = get_emoji_id(guild, emoji_alias)
     replaced_char = "<:" + emoji_alias + ":" + str(emoji_id) + ">"
     replaced_char += other_dict[other] if other else ""
     return replaced_char
@@ -50,7 +50,7 @@ class Replace_emojiCog(commands.Cog):
         webhook = await get_webhook(ctx)
         replaced_string = []
         for replace_char in replace_string:
-            replaced_char = get_replaced_char(ctx, replace_char)
+            replaced_char = get_replaced_char(ctx.guild, replace_char)
             replaced_string.append(replaced_char)
         content = ">>> " + "".join(replaced_string)
         await ctx.message.delete()
