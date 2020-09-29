@@ -11,7 +11,7 @@ class ThreadCog(commands.Cog):
         self.bot = bot
 
     async def set_admin(self, author_id, channel_id):
-        await self.bot.database.inser(
+        await self.bot.database.insert(
             constant.TABLE_NAME,
             channel_id=channel_id,
             author_id=author_id,
