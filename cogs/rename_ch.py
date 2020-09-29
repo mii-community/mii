@@ -19,16 +19,6 @@ class Rename_chCog(commands.Cog):
         ch_data = await self.bot.database.fetch_row(
             constant.TABLE_NAME, channel_id=ctx.channel.id
         )
-        if not user:
-            user = await self.bot.database.fetchrow(
-                """
-                INSERT INTO mii (user_id, guild_id)
-                     VALUES ($1, $2)
-                  RETURNING *
-                """,
-                ctx.author.id,
-                ctx.guild.id,
-            )
 
         if ch_data["author_id"] != ctx.author.id:
             await ctx.send("権限がありません。")
