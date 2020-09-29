@@ -8,9 +8,9 @@ import constant
 
 async def get_webhook(message):
     webhooks = await message.channel.webhooks()
-    for webhook in webhooks:
-        if webhook.name == constant.WEBHOOK_NAME:
-            return webhook
+    webhook = discord.utils.get(webhooks, name=constant.WEBHOOK_NAME)
+    if webhook:
+        return webhook
     return await message.channel.create_webhook(name=constant.WEBHOOK_NAME)
 
 
