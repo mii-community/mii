@@ -38,22 +38,10 @@ def get_replaced_char(message, char):
     else:
         return char
 
-    replaced_char = "<:" + emoji_alias + ":" + str(1) + ">"
+    emoji_id = get_emoji_id(message, emoji_alias)
+    replaced_char = "<:" + emoji_alias + ":" + str(emoji_id) + ">"
     replaced_char += other_dict[other] if other else ""
     return replaced_char
-
-    # elif replace_char in constant.DAKUTEN_EMOJI:
-    #     emoji_alias = constant.DAKUTEN_EMOJI[replace_char]
-    #     emoji_id = get_emoji_id(message, emoji_alias)
-    #     replaced_char = "<:" + emoji_alias + ":" + str(emoji_id) + ">" + "ﾞ "
-    #     return replaced_char
-    # elif replace_char in constant.HANDAKUTEN_EMOJI:
-    #     emoji_alias = constant.HANDAKUTEN_EMOJI[replace_char]
-    #     emoji_id = get_emoji_id(message, emoji_alias)
-    #     replaced_char = "<:" + emoji_alias + ":" + str(emoji_id) + ">" + "ﾟ "
-    #     return replaced_char
-    # else:
-    #     replaced_char = replace_char
 
 
 class Replace_emojiCog(commands.Cog):
@@ -70,7 +58,6 @@ class Replace_emojiCog(commands.Cog):
             replaced_string.append(replaced_char)
         content = ">>> " + "".join(replaced_string)
         await ctx.message.delete()
-        print(content)
         await webhook.send(
             avatar_url=ctx.author.avatar_url,
             username=ctx.author.display_name,
