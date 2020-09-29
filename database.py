@@ -20,15 +20,15 @@ class Database:
         instance.pool = await asyncpg.create_pool(
             constant.DATABASE_URL, ssl=cls._get_db_context()
         )
-        await instance._setup()
+        await instance._setup(constant.TABLE_NAME)
         return instance
 
-    async def _setup(self) -> None:
+    async def _setup(self, table_name) -> None:
         await self.pool.execute(
-            """
+            f"""
             CREATE TABLE
                 IF NOT EXISTS
-                mii_channels (
+                {table_name} (
                     channel_id bigint PRIMARY KEY,
                     author_id bigint,
                     channel_type text

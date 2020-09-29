@@ -25,6 +25,7 @@ ROLE_ARCHIVE = int(os.getenv("ROLE_ARCHIVE", "702420267309203466"))
 
 # database
 DATABASE_URL = os.getenv("DATABASE_URL")
+TABLE_NAME = os.getenv("TABLE_NAME", "mii_channels")
 
 # name
 WEBHOOK_NAME = "mii"
