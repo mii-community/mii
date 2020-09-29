@@ -12,10 +12,7 @@ class Rename_chCog(commands.Cog):
         if ctx.author.bot:
             return
 
-        elif not (
-            ctx.channel.category.id == constant.CAT_ROOM
-            or ctx.channel.category.id == constant.CAT_THREAD
-        ):
+        elif ctx.channel.category.id not in (constant.CAT_ROOM, constant.CAT_THREAD):
             await ctx.send("ここでは実行できません。")
             return
 
