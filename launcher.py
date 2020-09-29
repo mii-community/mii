@@ -1,4 +1,5 @@
 import os
+import glob
 import traceback
 import pathlib
 import asyncio
@@ -30,6 +31,7 @@ class MyBot(commands.Bot):
         return instance
 
     async def on_ready(self):
+        self.database = await create_db_pool()
         print("logged in as:", self.user.name, self.user.id)
 
 

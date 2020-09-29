@@ -19,87 +19,57 @@ class Room(commands.Cog):
             await ctx.send("ここでは実行できません。")
             return
 
-        user = await self.bot.database.fetchrow(
+        ch_data = await self.bot.database.fetchrow(
             """
             SELECT *
-              FROM mii
-             WHERE user_id = $1
-               AND guild_id = $2
+              FROM mii_channels
+             WHERE author_id = $1
+               AND channel_type = $2
             """,
             ctx.author.id,
-            ctx.guild.id,
+            "room",
         )
-        if not user:
-            user = await self.bot.database.fetchrow(
-                """
-                INSERT INTO mii (user_id, guild_id)
-                     VALUES ($1, $2)
-                  RETURNING *
-                """,
-                ctx.author.id,
-                ctx.guild.id,
-            )
 
-        cat_room = self.bot.get_channel(constant.CAT_ROOM)
-        cat_room_archive = self.bot.get_channel(constant.CAT_ROOM_ARCHIVE)
-        role_member = ctx.guild.get_role(constant.ROLE_MEMBER)
-        role_archive = ctx.guild.get_role(constant.ROLE_ARCHIVE)
         creator = ctx.guild.get_member(ctx.author.id)
-        except_flag = True
-
-        async def new_room():
-            named = f"{ctx.author.display_name}の部屋"
-            new_room = await cat_room.create_text_channel(name=named)
+        cat_room = self.bot.get_channel(constant.CAT_ROOM)
+        # ルームを持っていない場合
+        if not ch_data:
+            name = f"{ctx.author.display_name}の部屋"
+            new_room = await cat_room.create_text_channel(name=name)
             await new_room.set_permissions(
                 creator, manage_messages=True, manage_channels=True
             )
             await ctx.send(f"{ctx.author.mention} {new_room.mention} を作成しました。")
             await self.bot.database.execute(
                 """
-                UPDATE mii
-                   SET room_id = $1
-                 WHERE user_id = $2
-                   AND guild_id = $3
+                INSERT INTO mii_channels (channel_id, author_id, channel_type)
+                     VALUES ($1, $2, $3)
+                  RETURNING *
                 """,
                 new_room.id,
                 ctx.author.id,
-                ctx.guild.id,
+                "room",
             )
             return
 
-        # ルームを持っていない場合: 新規作成
-        if not user["room_id"]:
-            await new_room()
-
-        for channel in ctx.guild.channels:
-            if (
-                channel.category != cat_room and channel.category != cat_room_archive
-            ) or (channel.id != user["room_id"]):
-                continue
-
-            # ルームカテゴリーにある場合
-            if channel.category == cat_room:
-                await ctx.send(
-                    f"{ctx.author.mention} {channel.mention} あなたの部屋はもう作られています。"
-                )
-                except_flag = False
-                return
-
-            # アーカイブカテゴリーにある場合
-            elif channel.category == cat_room_archive:
-                await channel.edit(category=cat_room)
-                await channel.set_permissions(role_archive, overwrite=None)
-                await channel.set_permissions(role_member, read_messages=True)
-                await channel.set_permissions(
-                    creator, manage_messages=True, manage_channels=True
-                )
-                await ctx.send(f"{ctx.author.mention} {channel.mention} をアーカイブから戻しました。")
-                except_flag = False
-                return
-
-        # 例外: 新規作成
-        if except_flag:
-            await new_room()
+        ch_room = self.bot.get_channel(ch_data["channel_id"])
+        cat_room_archive = self.bot.get_channel(constant.CAT_ROOM_ARCHIVE)
+        # ルームカテゴリーにある場合
+        if ch_room.category == cat_room:
+            text = "あなたの部屋はもう作られています。"
+        # アーカイブカテゴリーにある場合
+        elif ch_room.category == cat_room_archive:
+            text = "をアーカイブから戻しました。"
+            role_member = ctx.guild.get_role(constant.ROLE_MEMBER)
+            role_archive = ctx.guild.get_role(constant.ROLE_ARCHIVE)
+            await ch_room.edit(category=cat_room)
+            await ch_room.set_permissions(role_archive, overwrite=None)
+            await ch_room.set_permissions(role_member, read_messages=True)
+            await ch_room.set_permissions(
+                creator, manage_messages=True, manage_channels=True
+            )
+        # おわりに
+        await ctx.send(f"{ctx.author.mention} {ch_room.mention} {text}")
 
 
 def setup(bot):

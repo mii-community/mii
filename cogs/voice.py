@@ -51,9 +51,15 @@ class VoiceCog(commands.Cog):
             await self.bot.get_channel(constant.CH_VOICE_TEXT).send(
                 embed=embed, delete_after=60
             )
+            await self.bot.get_channel(constant.CH_VOICE_TEXT).send(
+                embed=embed, delete_after=60
+            )
         elif before.channel and i >= 1:
             embed = discord.Embed(
                 description=f"{member.display_name}が退室しました。", colour=0x000000
+            )
+            await self.bot.get_channel(constant.CH_VOICE_TEXT).send(
+                embed=embed, delete_after=60
             )
             await self.bot.get_channel(constant.CH_VOICE_TEXT).send(
                 embed=embed, delete_after=60

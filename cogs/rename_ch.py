@@ -1,8 +1,5 @@
-import os
-
 from discord.ext import commands
-
-import launcher
+import constant
 
 
 class Rename_chCog(commands.Cog):
@@ -10,13 +7,14 @@ class Rename_chCog(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def rename(self, ctx, *, named):
+    async def rename(self, ctx, *, name: str):
         """あなたの部屋/スレッドをリネームします。"""
         if ctx.author.bot:
             return
-        elif (
-            ctx.channel.category.id != launcher.CAT_ROOM
-            and ctx.channel.category.id != launcher.CAT_THREAD
+
+        elif not (
+            ctx.channel.category.id == constant.CAT_ROOM
+            or ctx.channel.category.id == constant.CAT_THREAD
         ):
             await ctx.send("ここでは実行できません。")
             return
@@ -42,14 +40,14 @@ class Rename_chCog(commands.Cog):
                 ctx.guild.id,
             )
 
-        if ctx.channel.id == user[
-            "room_id"
-        ] or ctx.channel.topic == "thread-author: " + str(ctx.author.id):
-            await ctx.channel.edit(name=named)
-            await ctx.send(f"{ctx.author.mention} チャンネル名を {named} に上書きしました。")
+        if not (
+            ctx.channel.id == user["room_id"]
+            and ctx.channel.topic == f"thread-author: {ctx.author.id}"
+        ):
+            await ctx.send("権限がありません。")
             return
-        await ctx.send("権限がありません。")
-        return
+        await ctx.channel.edit(name=name)
+        await ctx.send(f"{ctx.author.mention} チャンネル名を {name} に上書きしました。")
 
 
 def setup(bot):

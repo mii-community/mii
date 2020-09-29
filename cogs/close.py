@@ -1,6 +1,4 @@
-import discord
 from discord.ext import commands
-
 import constant
 
 
@@ -17,19 +15,27 @@ class CloseCog(commands.Cog):
             await ctx.send("ここでは実行できません。")
             return
 
-        elif (
-            ctx.channel.topic
-            not in (f"room-author: {ctx.author.id}", f"thread-author: {ctx.author.id}",)
-            or not ctx.author.guild_permissions.administrator
-        ):
+        ch_data = await self.bot.database.fetchrow(
+            """
+            SELECT *
+              FROM mii_channels
+             WHERE channel_id = $1
+            """,
+            ctx.channel.id,
+        )
+
+        if not ch_data:
+            await ctx.send("データが存在しませんでした。")
+            return
+        elif ctx.author.id != ch_data["author_id"]:
             await ctx.send("権限がありません。")
             return
 
         if ctx.channel.category.id == constant.CAT_ROOM:
-            destination_category = self.bot.get_channel(constant.CAT_ROOM_ARCHIVE)
+            goto_cat = self.bot.get_channel(constant.CAT_ROOM_ARCHIVE)
         elif ctx.channel.category.id == constant.CAT_THREAD:
-            destination_category = self.bot.get_channel(constant.CAT_THREAD_ARCHIVE)
-        await ctx.channel.edit(category=destination_category)
+            goto_cat = self.bot.get_channel(constant.CAT_THREAD_ARCHIVE)
+        await ctx.channel.edit(category=goto_cat)
 
         role_member = ctx.guild.get_role(constant.ROLE_MEMBER)
         role_archive = ctx.guild.get_role(constant.ROLE_ARCHIVE)

@@ -9,28 +9,26 @@ class PinCog(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_raw_reaction_add(self, reaction_event):
-        if reaction_event.member.bot:
+    async def on_raw_reaction_add(self, reaction_pin):
+        if reaction_pin.emoji.name != constant.EMOJI_PIN:
             return
-        if reaction_event.emoji.name != constant.PIN_EMOJI:
-            return
-        channel = self.bot.get_channel(reaction_event.channel_id)
-        message = await channel.fetch_message(reaction_event.message_id)
+        channel = self.bot.get_channel(reaction_pin.channel_id)
+        message = await channel.fetch_message(reaction_pin.message_id)
         if message.pinned:
             return
         await message.pin()
-        await channel.send(f"{reaction_event.member.display_name}がピン留めしました。")
+        await channel.send(f"{reaction_pin.member.display_name}がピン留めしました。")
 
     @commands.Cog.listener()
-    async def on_raw_reaction_remove(self, reaction_event):
-        if reaction_event.emoji.name != constant.PIN_EMOJI:
+    async def on_raw_reaction_remove(self, reaction_pin):
+        if reaction_pin.emoji.name != constant.EMOJI_PIN:
             return
-        channel = self.bot.get_channel(reaction_event.channel_id)
-        message = await channel.fetch_message(reaction_event.message_id)
+        channel = self.bot.get_channel(reaction_pin.channel_id)
+        message = await channel.fetch_message(reaction_pin.message_id)
         if not message.pinned:
             return
-        pin_reaction = discord.utils.get(message.reactions, emoji=constant.PIN_EMOJI)
-        if pin_reaction:
+        reaction = discord.utils.get(message.reactions, emoji=constant.EMOJI_PIN)
+        if reaction:
             return
         await message.unpin()
         embed = discord.Embed(

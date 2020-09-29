@@ -1,8 +1,5 @@
-import os
-
-import discord
 from discord.ext import commands
-
+import discord
 import constant
 
 
@@ -11,25 +8,24 @@ class RegisterCog(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_raw_reaction_add(self, reaction_event):
-        if reaction_event.channel_id != constant.CH_REGISTER:
+    async def on_raw_reaction_add(self, reaction_register):
+        if reaction_register.channel_id != constant.CH_REGISTER:
             return
 
-        channel = self.bot.get_channel(constant.CH_REGISTER)
-        guild = self.bot.get_guild(reaction_event.guild_id)
-        message = await channel.fetch_message(reaction_event.message_id)
+        member = reaction_register.member  # shorten
+        guild = self.bot.get_guild(reaction_register.guild_id)  # for get_role()
+        role = guild.get_role(constant.ROLE_MEMBER)  # for add_roles()
+        channel = self.bot.get_channel(constant.CH_REGISTER)  # for fetch_message()
+        message = await channel.fetch_message(
+            reaction_register.message_id
+        )  # for remove_reaction()
 
-        new_member = reaction_event.member
-        member_role = guild.get_role(constant.ROLE_MEMBER)
-
-        await message.remove_reaction(reaction_event.emoji, new_member)
-        if member_role in new_member.roles:
-            return
-
-        await new_member.add_roles(member_role)
-        await self.bot.get_channel(constant.CH_JOIN).send(
-            f"{reaction_event.member.mention}が参加しました。"
-        )
+        if not role in member.roles:
+            await member.add_roles(role)
+            await self.bot.get_channel(constant.CH_JOIN).send(
+                f"{reaction_register.member.mention}が参加しました。"
+            )
+        await message.remove_reaction(reaction_register.emoji, member)
 
 
 def setup(bot):
