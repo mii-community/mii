@@ -1,6 +1,7 @@
 import os
 import traceback
 import pathlib
+import asyncio
 
 from discord.ext import commands
 
@@ -9,9 +10,11 @@ from database import Database
 
 
 class MyBot(commands.Bot):
-    def __init__(self):
+    def __init__(self, loop):
         super().__init__(
-            command_prefix=commands.when_mentioned_or("!"), help_command=Help()
+            command_prefix=commands.when_mentioned_or("!"),
+            help_command=Help(),
+            loop=loop,
         )
         for cog in pathlib.Path("cogs/").glob("*.py"):
             try:
@@ -20,9 +23,11 @@ class MyBot(commands.Bot):
             except:
                 traceback.print_exc()
 
-    async def __ainit__(self):
-        self.database = Database()
-        await self.database.__ainit__()
+    @classmethod
+    async def make_instance(cls, loop):
+        instance = cls(loop=loop)
+        instance.database = await Database.make_instance()
+        return instance
 
     async def on_ready(self):
         print("logged in as:", self.user.name, self.user.id)
@@ -41,6 +46,6 @@ class Help(commands.DefaultHelpCommand):
 
 
 if __name__ == "__main__":
-    bot = MyBot()
-    bot.loop.run_until_complete(bot.__ainit__())
+    loop = asyncio.get_event_loop()
+    bot = loop.run_until_complete(MyBot.make_instance(loop))
     bot.run(constant.DISCORD_BOT_TOKEN)

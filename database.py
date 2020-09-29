@@ -14,11 +14,14 @@ class Database:
         # --ここまでのコードがないと接続ができない。
         return ctx
 
-    async def __ainit__(self) -> None:
-        self.pool = await asyncpg.create_pool(
-            constant.DATABASE_URL, ssl=get_db_context()
+    @classmethod
+    async def make_instance(cls):
+        instance = cls()
+        instance.pool = await asyncpg.create_pool(
+            constant.DATABASE_URL, ssl=cls._get_db_context()
         )
-        await self._setup()
+        await instance._setup()
+        return instance
 
     async def _setup(self) -> None:
         await self.pool.execute(
