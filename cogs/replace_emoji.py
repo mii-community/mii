@@ -6,12 +6,12 @@ from discord.ext import commands
 import constant
 
 
-async def get_webhook(message):
-    webhooks = await message.channel.webhooks()
+async def get_webhook(channel):
+    webhooks = await channel.webhooks()
     webhook = discord.utils.get(webhooks, name=constant.WEBHOOK_NAME)
     if webhook:
         return webhook
-    return await message.channel.create_webhook(name=constant.WEBHOOK_NAME)
+    return await channel.create_webhook(name=constant.WEBHOOK_NAME)
 
 
 def get_emoji_id(guild, emoji_alias):
@@ -47,7 +47,7 @@ class Replace_emojiCog(commands.Cog):
     @commands.command()
     async def emoji(self, ctx, replace_string):
         """!emoji <text> でテキストをサポート済みの絵文字に置き換えます。"""
-        webhook = await get_webhook(ctx)
+        webhook = await get_webhook(ctx.channel)
         replaced_string = []
         for replace_char in replace_string:
             replaced_char = get_replaced_char(ctx.guild, replace_char)
