@@ -9,23 +9,15 @@ class PurgeCog(commands.Cog):
     async def purge(self, ctx, limit):
         """!purge <number> で指定された数のメッセージを一括削除します。"""
 
-        async def purge_message(limit):
-            await channel.purge(limit=limit)
-            await ctx.send("✅")
-
         channel = ctx.channel
         if not ctx.author.permissions_in(channel).manage_messages:
             await channel.send("メッセージ管理の権限がありません。")
             return
-        if limit == "all":
-            await purge_message(None)
-            return
-        try:
-            limit = int(limit)
-        except:
+        if limit == "all" or limit.isdecimal():
+            await channel.purge(limit=None if limit == "all" else limit)
+            await ctx.send("✅")
+        else:
             await channel.send("不正な引数です。削除するメッセージ数か、全て削除する場合はallを入力してください。")
-            return
-        await purge_message(limit)
 
 
 def setup(bot):
