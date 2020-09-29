@@ -10,7 +10,7 @@ class PinCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, reaction_pin):
-        if reaction_pin.emoji.name != constant.EMOJI_PIN:
+        if reaction_pin.emoji.name != constant.PIN_EMOJI:
             return
         channel = self.bot.get_channel(reaction_pin.channel_id)
         message = await channel.fetch_message(reaction_pin.message_id)
@@ -21,13 +21,13 @@ class PinCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, reaction_pin):
-        if reaction_pin.emoji.name != constant.EMOJI_PIN:
+        if reaction_pin.emoji.name != constant.PIN_EMOJI:
             return
         channel = self.bot.get_channel(reaction_pin.channel_id)
         message = await channel.fetch_message(reaction_pin.message_id)
         if not message.pinned:
             return
-        reaction = discord.utils.get(message.reactions, emoji=constant.EMOJI_PIN)
+        reaction = discord.utils.get(message.reactions, emoji=constant.PIN_EMOJI)
         if reaction:
             return
         await message.unpin()
