@@ -40,9 +40,40 @@ class Owner(commands.Cog, command_attrs=dict(hidden=True)):
                 channel_type="room",
             )
         await ctx.send(f"{channel.mention}の所有者は{member.display_name}にセットされました。")
+        await ctx.channel.edit(sync_permissions=True)
         await ctx.channel.set_permissions(
             member, manage_messages=True, manage_channels=True
         )
+
+    @commands.command(name="thread")
+    @commands.is_owner()
+    async def db_set_thread_id(
+        self, ctx, member: discord.Member
+    ):
+        channel = ctx.channel
+        # データベースからデータをもらう
+        ch_data = await self.bot.database.fetch_row(
+            constant.TABLE_NAME, channel_id=channel.id
+        )
+
+        # データがなければ新規作成
+        if not ch_data:
+            await self.bot.database.insert(
+                constant.TABLE_NAME,
+                channel_id=channel.id,
+                author_id=member.id,
+                channel_type="thread",
+            )
+
+        # データの上書き
+        else:
+            await self.bot.database.update(
+                constant.TABLE_NAME,
+                {"author_id": member.id},
+                channel_id=channel.id,
+                channel_type="thread",
+            )
+        await ctx.send(f"{channel.mention}の所有者は{member.display_name}にセットされました。")
 
 
 def setup(bot):

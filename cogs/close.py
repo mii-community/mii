@@ -33,12 +33,14 @@ class CloseCog(commands.Cog):
             goto_cat = self.bot.get_channel(constant.CAT_THREAD_ARCHIVE)
         await ctx.channel.edit(category=goto_cat)
 
-        role_member = ctx.guild.get_role(constant.ROLE_MEMBER)
-        role_archive = ctx.guild.get_role(constant.ROLE_ARCHIVE)
-        await ctx.channel.set_permissions(role_member, overwrite=None)
-        await ctx.channel.set_permissions(
-            role_archive, read_messages=True, send_messages=False
-        )
+        # role_member = ctx.guild.get_role(constant.ROLE_MEMBER)
+        # role_archive = ctx.guild.get_role(constant.ROLE_ARCHIVE)
+        # await ctx.channel.set_permissions(role_member, overwrite=None)
+        # await ctx.channel.set_permissions(
+        #     role_archive, read_messages=True, send_messages=False
+        # )
+
+        await ctx.channel.edit(sync_permissions=True)
 
 
 def setup(bot):

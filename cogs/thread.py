@@ -34,7 +34,8 @@ class ThreadCog(commands.Cog):
             return
 
         elif message.channel.id != constant.CH_THREAD_MASTER:
-            position = self.bot.get_channel(constant.CH_THREAD_MASTER).position + 1
+            position = self.bot.get_channel(
+                constant.CH_THREAD_MASTER).position + 1
             await message.channel.edit(position=position)
             return
 
@@ -60,8 +61,7 @@ class ThreadCog(commands.Cog):
             role_archive = message.guild.get_role(constant.ROLE_ARCHIVE)
             role_member = message.guild.get_role(constant.ROLE_MEMBER)
             await ch_thread.edit(category=cat_thread)
-            await ch_thread.set_permissions(role_archive, overwrite=None)
-            await ch_thread.set_permissions(role_member, read_messages=True)
+            await ch_thread.edit(sync_permissions=True)
             await self.update_admin(message.author.id, ch_thread.id)
         # おわりに
         await message.channel.send(

@@ -12,7 +12,7 @@ class Room(commands.Cog):
 
     @commands.command()
     async def open(self, ctx):
-        """スレッドマスターで使うことであなたの部屋を作成します。"""
+        """ルームマスターで使うことであなたの部屋を作成します。"""
         if ctx.author.bot:
             return
         elif ctx.channel.id != constant.CH_ROOM_MASTER:
@@ -50,10 +50,8 @@ class Room(commands.Cog):
         elif ch_room.category == cat_room_archive:
             text = "をアーカイブから戻しました。"
             role_member = ctx.guild.get_role(constant.ROLE_MEMBER)
-            role_archive = ctx.guild.get_role(constant.ROLE_ARCHIVE)
             await ch_room.edit(category=cat_room)
-            await ch_room.set_permissions(role_archive, overwrite=None)
-            await ch_room.set_permissions(role_member, read_messages=True)
+            await ch_room.edit(sync_permissions=True)
             await ch_room.set_permissions(
                 creator, manage_messages=True, manage_channels=True
             )
