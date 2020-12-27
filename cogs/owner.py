@@ -75,6 +75,12 @@ class Owner(commands.Cog, command_attrs=dict(hidden=True)):
             )
         await ctx.send(f"{channel.mention}の所有者は{member.display_name}にセットされました。")
 
+    @commands.command(name="rcce")
+    @commands.is_owner()
+    async def reset_count_custom_emoji(self, ctx):
+        await self.bot.database.delete_all(constant.COUNT_EMOJI)
+        await ctx.send("カスタム絵文字のカウントをリセットしました。")
+
 
 def setup(bot):
     bot.add_cog(Owner(bot))
