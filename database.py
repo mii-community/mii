@@ -78,3 +78,19 @@ class Database:
             """,
             *columns.values(),
         )
+
+    async def fetch_all(self, table_name: str, options: str = ""):
+        return await self.pool.fetch(
+            f"""
+            SELECT *
+                FROM {table_name}
+                {options}
+            """
+        )
+
+    async def delete_all(self, table_name: str):
+        return await self.pool.execute(
+            f"""
+            DELETE FROM {table_name}
+            """
+        )
