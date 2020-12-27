@@ -60,6 +60,8 @@ class CountCustomEmojiCog(commands.Cog):
         for i, data in enumerate(response):
             emoji_data = data["data"]
             count = data["count"]
+            if not self.bot.get_emoji(int(pattern.match(emoji_data).group(2))):
+                continue
             if (i + 1) % 4 == 0:
                 content += f"{emoji_data}：**{count}**\n"
                 continue
