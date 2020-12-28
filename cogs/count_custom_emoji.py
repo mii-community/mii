@@ -11,6 +11,11 @@ class CountCustomEmojiCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    def emoji_of_mii(self, emoji_id: int):
+        if not self.bot.get_emoji(emoji_id):
+            return False
+        return True
+
     async def get_data_from_db(self, emoji_data):
         return await self.bot.database.fetch_row(constant.COUNT_EMOJI, data=emoji_data)
 
@@ -35,6 +40,8 @@ class CountCustomEmojiCog(commands.Cog):
 
         response = pattern.finditer(message.content)
         for match_custom_emoji in response:
+            if not self.emoji_of_mii(int(match_custom_emoji.group(2))):
+                continue
             emoji_data = str(match_custom_emoji.group())
             data = await self.get_data_from_db(emoji_data)
             if data:
@@ -44,10 +51,14 @@ class CountCustomEmojiCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, reaction):
-        if reaction.emoji.name in emoji.UNICODE_EMOJI:
+        emoji = reaction.emoji
+        if emoji.name in emoji.UNICODE_EMOJI:
             return
 
-        emoji_data = str(reaction.emoji)
+        emoji_data = str(emoji)
+        if not self.emoji_of_mii(int(pattern.match(emoji_data).group(2))):
+            return
+
         data = await self.get_data_from_db(emoji_data)
         if data:
             await self.update_count_custom_emoji(data, emoji_data)
