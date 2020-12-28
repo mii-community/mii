@@ -88,6 +88,19 @@ class Database:
             """
         )
 
+    async def delete_row(self, table_name: str, **columns) -> asyncpg.Record:
+        return await self.pool.execute(
+            f"""
+            DELETE
+                FROM {table_name}
+                WHERE
+                    {" AND ".join(
+                        f"{key} = ${index}" for (index, key) in enumerate(columns.keys(), start=1)
+                    )}
+            """,
+            *columns.values(),
+        )
+
     async def delete_all(self, table_name: str):
         return await self.pool.execute(
             f"""
