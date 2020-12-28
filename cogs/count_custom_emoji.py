@@ -70,15 +70,19 @@ class CountCustomEmojiCog(commands.Cog):
         """カスタム絵文字の使用回数を表示します。"""
         response = await self.bot.database.fetch_all(constant.COUNT_EMOJI, "ORDER BY count desc")
         content = "カスタム絵文字のカウント\n"
-        for i, data in enumerate(response):
+        i = 1
+        for data in response:
             emoji_data = data["data"]
             count = data["count"]
             if not self.bot.get_emoji(int(pattern.match(emoji_data).group(2))):
+                await self.bot.database.delete_row(constant.COUNT_EMOJI, data=emoji_data)
                 continue
-            if (i + 1) % 4 == 0:
+            if i % 4 == 0:
                 content += f"{emoji_data}：**{count}**\n"
+                i += 1
                 continue
             content += f"{emoji_data}：**{count}**　　"
+            i += 1
         await ctx.send(content)
 
 
