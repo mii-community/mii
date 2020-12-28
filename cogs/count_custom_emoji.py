@@ -55,6 +55,7 @@ class CountCustomEmojiCog(commands.Cog):
 
     @commands.command(name="scce")
     async def show_count_custom_emoji(self, ctx):
+        """カスタム絵文字の使用回数を表示します。"""
         response = await self.bot.database.fetch_all(constant.COUNT_EMOJI, "ORDER BY count desc")
         content = "カスタム絵文字のカウント\n"
         for i, data in enumerate(response):
