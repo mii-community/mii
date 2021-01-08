@@ -40,9 +40,7 @@ class Help(commands.DefaultHelpCommand):
 
     def get_ending_note(self):
         return (
-            f"メッセージに{constant.PIN_EMOJI}リアクションをするとピン留めできます。\n"
-            "スレッドは発言があると一番上に移動します。\n"
-            "!コマンド または @みぃ様 コマンド でも利用することができます。"
+            "@みぃ様 <コマンド> でも利用することができます。"
         )
 
 
