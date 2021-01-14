@@ -8,7 +8,7 @@ class Poll(commands.Cog):
 
     @commands.command()
     async def poll(self, ctx, title, *args):
-        """!poll <title> <任意の数の要素(22未満、指定しなければ さんせいorはんたい)> で投票を行います。"""
+        """!poll <title> <任意の数の要素(21未満、指定しなければ さんせいorはんたい)> で投票を行います。"""
         if len(args) > 21:
             return
         emoji = 0x0001F1E6
