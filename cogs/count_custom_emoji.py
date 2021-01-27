@@ -79,10 +79,14 @@ class CountCustomEmojiCog(commands.Cog):
                 continue
             if i % 4 == 0:
                 content += f"{emoji_data}：**{count}**\n"
+                if len(content) > 1500:
+                    await ctx.send(content)
+                    content = ""
                 i += 1
                 continue
             content += f"{emoji_data}：**{count}**　　"
             i += 1
+
         await ctx.send(content)
 
 
