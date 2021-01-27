@@ -38,7 +38,7 @@ class ThreadCog(commands.Cog):
                 constant.CH_THREAD_MASTER).position + 1
             await message.channel.edit(position=position)
             return
-
+        ch_main = self.bot.get_channel(constant.CH_MAIN)
         # 簡易的なCH名の重複チェック
         name = message.content
         ch_thread = discord.utils.get(message.guild.channels, name=name)
@@ -50,6 +50,7 @@ class ThreadCog(commands.Cog):
                 f"{message.author.mention} {new_thread.mention} を作成しました。"
             )
             await self.set_admin(message.author.id, new_thread.id)
+            await ch_main.send(f"新しいスレッドが開始されました。{new_thread.mention}")
             return
 
         # 同名CHがスレッドカテゴリーにある場合
@@ -63,11 +64,11 @@ class ThreadCog(commands.Cog):
             await ch_thread.edit(category=cat_thread)
             await ch_thread.edit(sync_permissions=True)
             await self.update_admin(message.author.id, ch_thread.id)
+            await ch_main.send(f"スレッドが再開されました。{ch_thread.mention}")
         # おわりに
         await message.channel.send(
             f"{message.author.mention} {ch_thread.mention} {text}"
         )
-
 
 def setup(bot):
     bot.add_cog(ThreadCog(bot))
