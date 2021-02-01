@@ -1,37 +1,39 @@
-import discord
-from discord.ext import commands
-
 import constant
+from discord import AllowedMentions, Embed, utils
+from discord.ext.commands import Bot, Cog
 
 
-class PinCog(commands.Cog):
-    def __init__(self, bot):
+class Pin(Cog):
+    def __init__(self, bot: Bot):
         self.bot = bot
 
-    @commands.Cog.listener()
-    async def on_raw_reaction_add(self, reaction_pin):
-        if reaction_pin.emoji.name != constant.PIN_EMOJI:
+    @Cog.listener()
+    async def on_raw_reaction_add(self, reaction):
+        if reaction.emoji.name != constant.PIN_EMOJI:
             return
-        channel = self.bot.get_channel(reaction_pin.channel_id)
-        message = await channel.fetch_message(reaction_pin.message_id)
+        channel = self.bot.get_channel(reaction.channel_id)
+        message = await channel.fetch_message(reaction.message_id)
         if message.pinned:
             return
         await message.pin()
-        await channel.send(f"{reaction_pin.member.display_name}がピン留めしました。")
+        await channel.send(
+            f"{reaction.member.mention}がピン留めしました。",
+            allowed_mentions=AllowedMentions.none(),
+        )
 
-    @commands.Cog.listener()
-    async def on_raw_reaction_remove(self, reaction_pin):
-        if reaction_pin.emoji.name != constant.PIN_EMOJI:
+    @Cog.listener()
+    async def on_raw_reaction_remove(self, reaction):
+        if reaction.emoji.name != constant.PIN_EMOJI:
             return
-        channel = self.bot.get_channel(reaction_pin.channel_id)
-        message = await channel.fetch_message(reaction_pin.message_id)
+        channel = self.bot.get_channel(reaction.channel_id)
+        message = await channel.fetch_message(reaction.message_id)
         if not message.pinned:
             return
-        reaction = discord.utils.get(message.reactions, emoji=constant.PIN_EMOJI)
+        reaction = utils.get(message.reactions, emoji=constant.PIN_EMOJI)
         if reaction:
             return
         await message.unpin()
-        embed = discord.Embed(
+        embed = Embed(
             title=f"送信者:{message.author.display_name}",
             description=f"メッセージ内容:{message.content}",
             color=0xFF0000,
@@ -39,5 +41,5 @@ class PinCog(commands.Cog):
         await channel.send("リアクションがゼロになったため、ピン留めが解除されました。", embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(PinCog(bot))
+def setup(bot: Bot):
+    bot.add_cog(Pin(bot))
