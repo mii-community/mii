@@ -39,7 +39,7 @@ class Thread(Cog):
             )
             return
         # 同名CHがスレッドカテゴリーにある場合
-        if ch_thread.category.id == constant.CAT_THREAD:
+        if ch_thread.category == cat_thread:
             text = "はもう作られています。"
         # 同名CHがアーカイブカテゴリーにある場合
         elif ch_thread.category.id == constant.CAT_THREAD_ARCHIVE:
