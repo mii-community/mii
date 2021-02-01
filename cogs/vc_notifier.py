@@ -9,6 +9,8 @@ class VCNotifier(Cog):
 
     @Cog.listener()
     async def on_voice_state_update(self, member, before, after):
+        if before.channel == after.channel:
+            return
         vc = after.channel or before.channel
         if not str(vc.id) in constant.VOICE_CHANNELS.keys():
             return
