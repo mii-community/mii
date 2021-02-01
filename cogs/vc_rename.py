@@ -41,14 +41,15 @@ class VCRename(Cog):
         if not str(vc.id) in constant.VOICE_CHANNELS.keys():
             return
         name = constant.VOICE_CHANNELS[str(vc.id)]["name"]
-        if len(vc.members) != 0 or vc.name == name:
-            return
-        await vc.edit(name=name)
-        vc_text = self.bot.get_channel(constant.VOICE_CHANNELS[str(vc.id)]["vc_text"])
-        await vc_text.edit(name=f"{name}-no-mic")
-        embed = Embed(description="接続人数が0になったのでチャンネル名をリセットしました。", colour=0x000000)
-        embed.set_footer(text="このメッセージは30秒後に自動で削除されます。")
-        await vc_text.send(embed=embed, delete_after=30)
+        if len(vc.members) == 0 and vc.name != name:
+            await vc.edit(name=name)
+            vc_text = self.bot.get_channel(
+                constant.VOICE_CHANNELS[str(vc.id)]["vc_text"]
+            )
+            await vc_text.edit(name=f"{name}-no-mic")
+            embed = Embed(description="接続人数が0になったのでチャンネル名をリセットしました。", colour=0x000000)
+            embed.set_footer(text="このメッセージは30秒後に自動で削除されます。")
+            await vc_text.send(embed=embed, delete_after=30)
 
 
 def setup(bot: Bot):
