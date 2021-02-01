@@ -1,22 +1,22 @@
 import os
 import traceback
 
+import constant
 import discord
 from discord.ext import commands
-
-import constant
 
 
 class Owner(commands.Cog, command_attrs=dict(hidden=True)):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="set")
+    @commands.command(name="room")
     @commands.is_owner()
     async def db_set_room_id(
-        self, ctx, channel: discord.TextChannel, member: discord.Member
+        self, ctx, member: discord.Member, channel: discord.TextChannel = None
     ):
-
+        if channel is None:
+            channel = ctx.channel
         # データベースからデータをもらう
         ch_data = await self.bot.database.fetch_row(
             constant.TABLE_NAME, author_id=member.id, channel_type="room"
@@ -48,9 +48,10 @@ class Owner(commands.Cog, command_attrs=dict(hidden=True)):
     @commands.command(name="thread")
     @commands.is_owner()
     async def db_set_thread_id(
-        self, ctx, member: discord.Member
+        self, ctx, member: discord.Member, channel: discord.Channel = None
     ):
-        channel = ctx.channel
+        if channel is None:
+            channel = ctx.channel
         # データベースからデータをもらう
         ch_data = await self.bot.database.fetch_row(
             constant.TABLE_NAME, channel_id=channel.id
