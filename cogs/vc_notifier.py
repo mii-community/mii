@@ -12,9 +12,9 @@ class VCNotifier(Cog):
         vc = after.channel or before.channel
         if not str(vc.id) in constant.VOICE_CHANNELS.keys():
             return
-        if after.channel and len(vc.members) >= 2:
+        if after.channel:
             embed = Embed(description=f"{member.mention}が入室しました。", colour=0x000000)
-        elif before.channel and len(vc.members) >= 1:
+        elif before.channel:
             embed = Embed(description=f"{member.mention}が退室しました。", colour=0x000000)
         else:
             return
