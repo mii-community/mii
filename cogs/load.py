@@ -1,57 +1,31 @@
-import os
-import pathlib
-import traceback
-
-from discord.ext import commands
+from discord.ext.commands import Bot, Cog, Context, command
 
 
-class Load(commands.Cog, command_attrs=dict(hidden=True)):
-    def __init__(self, bot):
+class CogsController(Cog, command_attrs=dict(hidden=True)):
+    def __init__(self, bot: Bot):
         self.bot = bot
 
-    async def cog_check(self, ctx):
-        if not await ctx.bot.is_owner(ctx.author):
-            await ctx.send("権限がありません。")
-            return False
-        return True
+    async def cog_check(self, ctx: Context):
+        if await ctx.bot.is_owner(ctx.author):
+            return True
+        await ctx.send("You cannot run this command.")
+        return False
 
-    @commands.command(name="load")
-    async def load_cog(self, ctx, cog):
-        try:
-            self.bot.load_extension("cogs." + cog)
-            await ctx.send(f"{cog}.pyは正常にロードされました。")
-        except:
-            await ctx.send(f"{cog}.pyはロードできませんでした。ログを確認してください。")
-            traceback.print_exc()
+    @command(name="load")
+    async def load_cog(self, ctx: Context, cog: str):
+        self.bot.load_extension("cogs." + cog)
+        await ctx.send(f"Loaded Extension: {cog}.py")
 
-    @commands.command(name="unload")
-    async def unload_cog(self, ctx, cog):
-        try:
-            self.bot.unload_extension("cogs." + cog)
-            await ctx.send(f"{cog}.pyは正常にアンロードされました。")
-        except:
-            await ctx.send(f"{cog}.pyはアンロードできませんでした。ログを確認してください。")
-            traceback.print_exc()
+    @command(name="unload")
+    async def unload_cog(self, ctx: Context, cog: str):
+        self.bot.unload_extension("cogs." + cog)
+        await ctx.send(f"Unloaded Extension: {cog}.py")
 
-    @commands.command()
-    @commands.is_owner()
-    async def reload(self, ctx, cog):
-        async def reload_cog(cog):
-            try:
-                self.bot.reload_extension("cogs." + cog)
-                await ctx.send(f"{cog}.pyは正常にリロードされました。")
-            except:
-                await ctx.send(f"{cog}.pyはリロードできませんでした。ログを確認してください。")
-                traceback.print_exc()
-            return
-
-        if cog == "all":
-            for cog in pathlib.Path("cogs/").glob("*.py"):
-                await reload_cog(cog.stem)
-            await ctx.send("全て終わりました。")
-            return
-        await reload_cog(cog)
+    @command(name="reload")
+    async def reload_cog(self, ctx: Context, cog: str):
+        self.bot.reload_extension("cogs." + cog)
+        await ctx.send(f"Reloaded Extension: {cog}.py")
 
 
-def setup(bot):
-    bot.add_cog(Load(bot))
+def setup(bot: Bot):
+    bot.add_cog(CogsController(bot))
