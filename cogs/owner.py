@@ -48,7 +48,7 @@ class Owner(commands.Cog, command_attrs=dict(hidden=True)):
     @commands.command(name="thread")
     @commands.is_owner()
     async def db_set_thread_id(
-        self, ctx, member: discord.Member, channel: discord.Channel = None
+        self, ctx, member: discord.Member, channel: discord.TextChannel = None
     ):
         if channel is None:
             channel = ctx.channel
