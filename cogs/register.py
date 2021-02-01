@@ -1,33 +1,31 @@
-import discord
-from discord.ext import commands
-
 import constant
+from discord import AllowedMentions
+from discord.ext.commands import Bot, Cog
 
 
-class RegisterCog(commands.Cog):
-    def __init__(self, bot):
+class Register(Cog):
+    def __init__(self, bot: Bot):
         self.bot = bot
 
-    @commands.Cog.listener()
-    async def on_raw_reaction_add(self, reaction_register):
-        if reaction_register.channel_id != constant.CH_REGISTER:
+    @Cog.listener()
+    async def on_raw_reaction_add(self, reaction):
+        if reaction.channel_id != constant.CH_REGISTER:
             return
 
-        member = reaction_register.member  # shorten
-        guild = self.bot.get_guild(reaction_register.guild_id)  # for get_role()
-        role = guild.get_role(constant.ROLE_MEMBER)  # for add_roles()
-        channel = self.bot.get_channel(constant.CH_REGISTER)  # for fetch_message()
-        message = await channel.fetch_message(
-            reaction_register.message_id
-        )  # for remove_reaction()
+        user = reaction.member
+        guild = self.bot.get_guild(reaction.guild_id)
+        role_member = guild.get_role(constant.ROLE_MEMBER)
+        ch_register = self.bot.get_channel(constant.CH_REGISTER)
+        message = await ch_register.fetch_message(reaction.message_id)
+        if role_member in user.roles:
+            return
+        await user.add_roles(role_member)
+        ch_notify = self.bot.get_channel(constant.CH_JOIN)
+        await ch_notify.send(
+            f"{user.mention}が参加しました。", allowed_mentions=AllowedMentions(users=False)
+        )
+        await message.remove_reaction(reaction.emoji, user)
 
-        if not role in member.roles:
-            await member.add_roles(role)
-            await self.bot.get_channel(constant.CH_JOIN).send(
-                f"{reaction_register.member.mention}が参加しました。"
-            )
-        await message.remove_reaction(reaction_register.emoji, member)
 
-
-def setup(bot):
-    bot.add_cog(RegisterCog(bot))
+def setup(bot: Bot):
+    bot.add_cog(Register(bot))
