@@ -22,7 +22,8 @@ class Register(Cog):
         await user.add_roles(role_member)
         ch_notify = self.bot.get_channel(constant.CH_JOIN)
         await ch_notify.send(
-            f"{user.mention}が参加しました。", allowed_mentions=AllowedMentions(users=False)
+            f"{user.mention}が参加しました。",
+            allowed_mentions=AllowedMention.none(),
         )
         await message.remove_reaction(reaction.emoji, user)
 
