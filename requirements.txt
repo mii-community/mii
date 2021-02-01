@@ -2,3 +2,7 @@ discord.py==1.5.1
 python-dotenv==0.13.0
 asyncpg==0.20.1
 emoji
+
+pylint==2.6.0
+black==20.8b1
+isort==5.7.0
