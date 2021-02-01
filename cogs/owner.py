@@ -1,36 +1,31 @@
-import os
-import traceback
-
 import constant
-import discord
-from discord.ext import commands
+from discord import AllowedMentions, Member, TextChannel
+from discord.ext.commands import Bot, Cog, Context, command, is_owner
 
 
-class Owner(commands.Cog, command_attrs=dict(hidden=True)):
-    def __init__(self, bot):
+class Owner(Cog, command_attrs=dict(hidden=True)):
+    def __init__(self, bot: Bot):
         self.bot = bot
 
-    @commands.command(name="room")
-    @commands.is_owner()
+    @is_owner()
+    @command(name="room")
     async def db_set_room_id(
-        self, ctx, member: discord.Member, channel: discord.TextChannel = None
+        self, ctx: Context, member: Member, channel: TextChannel = None
     ):
         if channel is None:
             channel = ctx.channel
         # データベースからデータをもらう
-        ch_data = await self.bot.database.fetch_row(
+        data_ch = await self.bot.database.fetch_row(
             constant.TABLE_NAME, author_id=member.id, channel_type="room"
         )
-
         # データがなければ新規作成
-        if not ch_data:
+        if data_ch is None:
             await self.bot.database.insert(
                 constant.TABLE_NAME,
                 channel_id=channel.id,
                 author_id=member.id,
                 channel_type="room",
             )
-
         # データの上書き
         else:
             await self.bot.database.update(
@@ -39,33 +34,34 @@ class Owner(commands.Cog, command_attrs=dict(hidden=True)):
                 channel_id=channel.id,
                 channel_type="room",
             )
-        await ctx.send(f"{channel.mention}の所有者は{member.display_name}にセットされました。")
-        await ctx.channel.edit(sync_permissions=True)
-        await ctx.channel.set_permissions(
+        await channel.edit(sync_permissions=True)
+        await channel.set_permissions(
             member, manage_messages=True, manage_channels=True
         )
+        await ctx.send(
+            f"{channel.mention}の所有者は{member.mention}にセットされました。",
+            allowed_mentions=AllowedMentions.none(),
+        )
 
-    @commands.command(name="thread")
-    @commands.is_owner()
+    @is_owner()
+    @command(name="thread")
     async def db_set_thread_id(
-        self, ctx, member: discord.Member, channel: discord.TextChannel = None
+        self, ctx: Context, member: Member, channel: TextChannel = None
     ):
         if channel is None:
             channel = ctx.channel
         # データベースからデータをもらう
-        ch_data = await self.bot.database.fetch_row(
+        data_ch = await self.bot.database.fetch_row(
             constant.TABLE_NAME, channel_id=channel.id
         )
-
         # データがなければ新規作成
-        if not ch_data:
+        if data_ch is None:
             await self.bot.database.insert(
                 constant.TABLE_NAME,
                 channel_id=channel.id,
                 author_id=member.id,
                 channel_type="thread",
             )
-
         # データの上書き
         else:
             await self.bot.database.update(
@@ -74,14 +70,17 @@ class Owner(commands.Cog, command_attrs=dict(hidden=True)):
                 channel_id=channel.id,
                 channel_type="thread",
             )
-        await ctx.send(f"{channel.mention}の所有者は{member.display_name}にセットされました。")
+        await ctx.send(
+            f"{channel.mention}の所有者は{member.mention}にセットされました。",
+            allowed_mentions=AllowedMentions.none(),
+        )
 
-    @commands.command(name="rcce")
-    @commands.is_owner()
-    async def reset_count_custom_emoji(self, ctx):
+    @is_owner()
+    @command(name="rcce")
+    async def reset_count_custom_emoji(self, ctx: Context):
         await self.bot.database.delete_all(constant.COUNT_EMOJI)
         await ctx.send("カスタム絵文字のカウントをリセットしました。")
 
 
-def setup(bot):
+def setup(bot: Bot):
     bot.add_cog(Owner(bot))
