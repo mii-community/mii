@@ -7,24 +7,6 @@ class Thread(Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
 
-    async def set_admin(self, author_id, channel_id):
-        await self.bot.database.insert(
-            constant.TABLE_NAME,
-            channel_id=channel_id,
-            author_id=author_id,
-            channel_type="thread",
-        )
-        return
-
-    async def update_admin(self, author_id, channel_id):
-        await self.bot.database.update(
-            constant.TABLE_NAME,
-            {"author_id": author_id},
-            channel_id=channel_id,
-            channel_type="thread",
-        )
-        return
-
     @Cog.listener()
     async def on_message(self, message: Message):
         author = message.author
@@ -49,7 +31,12 @@ class Thread(Cog):
             new_thread = await cat_thread.create_text_channel(name=name)
             await channel.send(f"{author.mention} {new_thread.mention} を作成しました。")
             await ch_main.send(f"{new_thread.mention} が作成されました。")
-            await self.set_admin(author.id, new_thread.id)
+            await self.bot.database.insert(
+                constant.TABLE_NAME,
+                channel_id=new_thread.id,
+                author_id=author.id,
+                channel_type="thread",
+            )
             return
         # 同名CHがスレッドカテゴリーにある場合
         if ch_thread.category.id == constant.CAT_THREAD:
@@ -60,7 +47,12 @@ class Thread(Cog):
             await ch_thread.edit(category=cat_thread)
             await ch_thread.edit(sync_permissions=True)
             await ch_main.send(f"{ch_thread.mention} が再開されました。")
-            await self.update_admin(author.id, ch_thread.id)
+            await self.bot.database.update(
+                constant.TABLE_NAME,
+                {"author_id": author.id},
+                channel_id=ch_thread.id,
+                channel_type="thread",
+            )
         await channel.send(f"{author.mention} {ch_thread.mention} {text}")
 
 
