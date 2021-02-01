@@ -2,19 +2,18 @@ import re
 
 import constant
 import emoji
-from discord.ext import commands
+from discord import Message
+from discord.ext.commands import Bot, Cog, Context, command
 
 pattern = re.compile(r"<:(\w+):(\d+)>")
 
 
-class CountCustomEmojiCog(commands.Cog):
-    def __init__(self, bot):
+class CountCustomEmoji(Cog):
+    def __init__(self, bot: Bot):
         self.bot = bot
 
     def emoji_of_mii(self, emoji_id: int):
-        if not self.bot.get_emoji(emoji_id):
-            return False
-        return True
+        return self.bot.get_emoji(emoji_id)
 
     async def get_data_from_db(self, emoji_data):
         return await self.bot.database.fetch_row(constant.COUNT_EMOJI, data=emoji_data)
@@ -33,8 +32,8 @@ class CountCustomEmojiCog(commands.Cog):
             count=1,
         )
 
-    @commands.Cog.listener()
-    async def on_message(self, message):
+    @Cog.listener()
+    async def on_message(self, message: Message):
         if message.author.bot:
             return
 
@@ -66,16 +65,20 @@ class CountCustomEmojiCog(commands.Cog):
         await self.insert_count_custom_emoji(emoji_data)
 
     @commands.command(name="scce")
-    async def show_count_custom_emoji(self, ctx):
+    async def show_count_custom_emoji(self, ctx: Context):
         """カスタム絵文字の使用回数を表示します。"""
-        response = await self.bot.database.fetch_all(constant.COUNT_EMOJI, "ORDER BY count desc")
+        response = await self.bot.database.fetch_all(
+            constant.COUNT_EMOJI, "ORDER BY count desc"
+        )
         content = "カスタム絵文字のカウント\n"
         i = 1
         for data in response:
             emoji_data = data["data"]
             count = data["count"]
             if not self.bot.get_emoji(int(pattern.match(emoji_data).group(2))):
-                await self.bot.database.delete_row(constant.COUNT_EMOJI, data=emoji_data)
+                await self.bot.database.delete_row(
+                    constant.COUNT_EMOJI, data=emoji_data
+                )
                 continue
             if i % 4 == 0:
                 content += f"{emoji_data}：**{count}**\n"
@@ -90,5 +93,5 @@ class CountCustomEmojiCog(commands.Cog):
         await ctx.send(content)
 
 
-def setup(bot):
-    bot.add_cog(CountCustomEmojiCog(bot))
+def setup(bot: Bot):
+    bot.add_cog(CountCustomEmoji(bot))
