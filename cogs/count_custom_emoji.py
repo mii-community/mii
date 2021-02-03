@@ -64,7 +64,7 @@ class CountCustomEmoji(Cog):
             return
         await self.insert_count_custom_emoji(emoji_data)
 
-    @commands.command(name="scce")
+    @command(name="scce")
     async def show_count_custom_emoji(self, ctx: Context):
         """カスタム絵文字の使用回数を表示します。"""
         response = await self.bot.database.fetch_all(
