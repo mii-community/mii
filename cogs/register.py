@@ -23,7 +23,7 @@ class Register(Cog):
         ch_notify = self.bot.get_channel(constant.CH_JOIN)
         await ch_notify.send(
             f"{user.mention}が参加しました。",
-            allowed_mentions=AllowedMention.none(),
+            allowed_mentions=AllowedMentions.none(),
         )
         await message.remove_reaction(reaction.emoji, user)
 
