@@ -8,7 +8,7 @@ class VCRename(Cog):
         self.bot = bot
 
     @command()
-    async def vc(self, ctx: Context, name: str):
+    async def vc(self, ctx: Context, *, name: str):
         """VC参加中に使うことでVCのリネームができます。"""
         state = ctx.author.voice
         if not state:
