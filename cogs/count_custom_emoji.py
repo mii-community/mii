@@ -1,9 +1,9 @@
 import re
 
 import constant
-import emoji
 from discord import Message
 from discord.ext.commands import Bot, Cog, Context, command
+from emoji import UNICODE_EMOJI
 
 pattern = re.compile(r"<:(\w+):(\d+)>")
 
@@ -51,7 +51,7 @@ class CountCustomEmoji(Cog):
     @Cog.listener()
     async def on_raw_reaction_add(self, reaction):
         emoji = reaction.emoji
-        if emoji.name in emoji.UNICODE_EMOJI:
+        if emoji.name in UNICODE_EMOJI:
             return
 
         emoji_data = str(emoji)
