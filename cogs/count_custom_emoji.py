@@ -48,7 +48,7 @@ class CountCustomEmoji(Cog):
                 continue
             await self.insert_count_custom_emoji(emoji_data)
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_raw_reaction_add(self, reaction):
         emoji = reaction.emoji
         if emoji.name in emoji.UNICODE_EMOJI:
