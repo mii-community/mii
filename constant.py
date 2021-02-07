@@ -30,6 +30,7 @@ VOICE_CHANNELS = {
     },
 }
 CH_AFK = int(os.getenv("CH_AFK", "655262798447902798"))
+CH_PIN_STOCK = int(os.getenv("CH_PIN_STOCK", "807894608721084477"))
 
 # role
 ROLE_MEMBER = int(os.getenv("ROLE_MEMBER", "652885488197435422"))
