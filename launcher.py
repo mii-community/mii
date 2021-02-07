@@ -4,6 +4,7 @@ import os
 import pathlib
 import traceback
 
+from discord import Intents
 from discord.ext import commands
 
 import constant
@@ -16,6 +17,7 @@ class MyBot(commands.Bot):
             command_prefix=commands.when_mentioned_or("!"),
             help_command=Help(),
             loop=loop,
+            intents=Intents.all(),
         )
         for cog in pathlib.Path("cogs/").glob("*.py"):
             try:
@@ -39,9 +41,7 @@ class Help(commands.DefaultHelpCommand):
         super().__init__(no_category="その他", command_attrs={"help": "コマンド一覧と簡単な説明を表示"})
 
     def get_ending_note(self):
-        return (
-            "@みぃ様 <コマンド> でも利用することができます。"
-        )
+        return "@みぃ様 <コマンド> でも利用することができます。"
 
 
 if __name__ == "__main__":
