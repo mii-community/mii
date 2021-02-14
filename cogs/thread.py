@@ -20,6 +20,8 @@ class Thread(Cog):
             and channel.id != constant.CH_THREAD_MASTER
         ):
             position = self.bot.get_channel(constant.CH_THREAD_MASTER).position + 1
+            if channel.position <= position:
+                return
             await channel.edit(position=position)
 
         if channel.id == constant.CH_THREAD_MASTER:
