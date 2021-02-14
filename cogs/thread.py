@@ -11,17 +11,23 @@ class Thread(Cog):
     async def on_message(self, message: Message):
         author = message.author
         channel = message.channel
-        if author.bot or channel.category.id != constant.CAT_THREAD:
+        if author.bot:
             return
 
         # 新着順ソート
-        if channel.id != constant.CH_THREAD_MASTER:
+        if (
+            channel.category.id == constant.CAT_THREAD
+            and channel.id != constant.CH_THREAD_MASTER
+        ):
             position = self.bot.get_channel(constant.CH_THREAD_MASTER).position + 1
             await channel.edit(position=position)
-            return
 
-        # 簡易的なCH名の重複チェック
-        name = message.content
+        if channel.id == constant.CH_THREAD_MASTER:
+            name = message.content
+        elif message.content.startswith("##"):
+            name = message.content[2:]
+        else:
+            return
         guild = message.guild
         ch_thread = utils.get(guild.channels, name=name)
         cat_thread = self.bot.get_channel(constant.CAT_THREAD)
@@ -30,7 +36,8 @@ class Thread(Cog):
         if ch_thread is None:
             new_thread = await cat_thread.create_text_channel(name=name)
             await channel.send(f"{author.mention} {new_thread.mention} を作成しました。")
-            await ch_main.send(f"{new_thread.mention} が作成されました。")
+            if not message.channel == ch_main:
+                await ch_main.send(f"{new_thread.mention} が作成されました。")
             await self.bot.database.insert(
                 constant.TABLE_NAME,
                 channel_id=new_thread.id,
