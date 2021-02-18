@@ -3,7 +3,7 @@ from random import choice
 from discord.ext.commands import Bot, Cog, Context, command
 
 
-class Pick(Cog):
+class Entrust(Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
 
@@ -14,4 +14,4 @@ class Pick(Cog):
 
 
 def setup(bot: Bot):
-    bot.add_cog(Pick(bot))
+    bot.add_cog(Entrust(bot))
