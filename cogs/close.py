@@ -33,6 +33,10 @@ class Close(Cog):
             goto_cat = self.bot.get_channel(constant.CAT_ROOM_ARCHIVE)
         elif channel.category.id == constant.CAT_THREAD:
             goto_cat = self.bot.get_channel(constant.CAT_THREAD_ARCHIVE)
+            await channel.category.edit(
+                name=f"THREAD ─ {len(channel.category.channels)}"
+            )
+            await goto_cat.edit(name=f"📜 THREAD ─ {len(goto_cat.channels)}")
         await channel.edit(category=goto_cat)
         await channel.edit(sync_permissions=True)
 

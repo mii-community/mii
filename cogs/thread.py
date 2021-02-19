@@ -46,6 +46,7 @@ class Thread(Cog):
                 author_id=author.id,
                 channel_type="thread",
             )
+            await cat_thread.edit(name=f"THREAD ─ {len(cat_thread.channels)}")
             return
         # 同名CHがスレッドカテゴリーにある場合
         if ch_thread.category == cat_thread:
@@ -61,6 +62,11 @@ class Thread(Cog):
                 {"author_id": author.id},
                 channel_id=ch_thread.id,
                 channel_type="thread",
+            )
+            await cat_thread.edit(name=f"THREAD ─ {len(channel.category.channels)}")
+            cat_thread_archive = self.bot.get_channel(constant.CAT_THREAD_ARCHIVE)
+            await cat_thread_archive.edit(
+                name=f"📜 THREAD ─ {len(cat_thread_archive.channels)}"
             )
         await channel.send(f"{author.mention} {ch_thread.mention} {text}")
 
