@@ -9,7 +9,7 @@ class TwitchNotifier(Cog):
 
     @Cog.listener()
     async def on_member_update(self, before: Member, after: Member):
-        if after.activities == before.activities:
+        if Streaming in before.activities:
             return
         activities = after.activities
         if activities is None:
