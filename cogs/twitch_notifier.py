@@ -18,6 +18,8 @@ class TwitchNotifier(Cog):
             if not isinstance(activity, Streaming):
                 return
             stream = activity
+            if stream.platform != "Twitch":
+                return
             embed = Embed(title=stream.name, url=stream.url)
             embed.add_field(name="Game:", value=stream.game, inline=True)
             embed.set_author(
