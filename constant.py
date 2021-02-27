@@ -8,6 +8,7 @@ dotenv.load_dotenv()
 DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 
 # channel
+CH_DEBUG = int(os.getenv("CH_DEBUG", "815174814222254090"))
 CH_REGISTER = int(os.getenv("CH_REGISTER", "608656664601690142"))
 CH_JOIN = int(os.getenv("CH_JOIN", "653923742245978129"))
 CH_ROOM_MASTER = int(os.getenv("CH_ROOM_MASTER", "702042912338346114"))
