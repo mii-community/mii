@@ -9,23 +9,15 @@ class TwitchNotifier(Cog):
 
     @Cog.listener()
     async def on_member_update(self, before: Member, after: Member):
-        if Streaming in before.activities:
-            await self.bot.get_channel(constant.CH_DEBUG).send(
-                f"🅰️before:{before.activities}\nafter:{after.activities}\n{before.mention}, {after.mention}"
-            )
-        elif Streaming in after.activities:
-            await self.bot.get_channel(constant.CH_DEBUG).send(
-                f"🅱️before:{before.activities}\nafter:{after.activities}\n{before.mention}, {after.mention}"
-            )
-        if Streaming in before.activities and Streaming in after.activities:
+        if before.activities is None or after.activities is None:
             return
-        activities = after.activities
-        if activities is None:
-            return
-        for activity in activities:
-            if not isinstance(activity, Streaming):
+        for before in before.activities:
+            if isinstance(before, Streaming):
                 return
-            stream = activity
+        for after in after.activities:
+            if not isinstance(after, Streaming):
+                return
+            stream = after
             if stream.platform != "Twitch":
                 return
             embed = Embed(title=stream.name, url=stream.url)
@@ -35,7 +27,7 @@ class TwitchNotifier(Cog):
             )
             embed.set_thumbnail(url=after.avatar_url)
             msg = f"{after.mention} が {stream.platform} で配信を始めました！"
-            await self.bot.get_channel(constant.CH_DEBUG).send(
+            await self.bot.get_channel(constant.CH_TWITCH).send(
                 msg, embed=embed, allowed_mentions=AllowedMentions.none()
             )
 
