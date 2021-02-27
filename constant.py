@@ -7,6 +7,7 @@ dotenv.load_dotenv()
 # token
 DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 
+GUILD_ID = os.getenv("GUILD_ID", "608634154019586059")
 # channel
 CH_DEBUG = int(os.getenv("CH_DEBUG", "815174814222254090"))
 CH_REGISTER = int(os.getenv("CH_REGISTER", "608656664601690142"))
@@ -37,7 +38,7 @@ CH_TWITCH = int(os.getenv("CH_TWITCH", "814297105560109067"))
 # role
 ROLE_MEMBER = int(os.getenv("ROLE_MEMBER", "652885488197435422"))
 ROLE_ARCHIVE = int(os.getenv("ROLE_ARCHIVE", "702420267309203466"))
-
+ROLE_STREAMING = int(os.getenv("ROLE_STREAMING", "815320056556027924"))
 # database
 DATABASE_URL = os.getenv("DATABASE_URL")
 TABLE_NAME = os.getenv("TABLE_NAME", "mii_channels")
