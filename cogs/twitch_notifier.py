@@ -9,9 +9,14 @@ class TwitchNotifier(Cog):
 
     @Cog.listener()
     async def on_member_update(self, before: Member, after: Member):
-        await self.bot.get_channel(constant.CH_DEBUG).send(
-            f"before:{before.activities}\nafter:{after.activities}\n{before.mention}, {after.mention}"
-        )
+        if Streaming in before.activities:
+            await self.bot.get_channel(constant.CH_DEBUG).send(
+                f"🅰️before:{before.activities}\nafter:{after.activities}\n{before.mention}, {after.mention}"
+            )
+        elif Streaming in after.activities:
+            await self.bot.get_channel(constant.CH_DEBUG).send(
+                f"🅱️before:{before.activities}\nafter:{after.activities}\n{before.mention}, {after.mention}"
+            )
         if Streaming in before.activities and Streaming in after.activities:
             return
         activities = after.activities
