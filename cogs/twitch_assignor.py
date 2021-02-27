@@ -6,6 +6,10 @@ from discord.ext.commands import Bot, Cog
 class TwitchAssignor(Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
+
+    @Cog.listener()
+    async def on_ready(self):
+        await self.bot.wait_until_ready()
         self.role_streaming = self.bot.get_guild(constant.GUILD_ID).get_role(
             constant.ROLE_STREAMING
         )

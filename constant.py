@@ -7,7 +7,7 @@ dotenv.load_dotenv()
 # token
 DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 
-GUILD_ID = os.getenv("GUILD_ID", "608634154019586059")
+GUILD_ID = int(os.getenv("GUILD_ID", "608634154019586059"))
 # channel
 CH_DEBUG = int(os.getenv("CH_DEBUG", "815174814222254090"))
 CH_REGISTER = int(os.getenv("CH_REGISTER", "608656664601690142"))
