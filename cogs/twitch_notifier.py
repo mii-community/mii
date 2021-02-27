@@ -12,10 +12,10 @@ class TwitchNotifier(Cog):
         for before in before.activities:
             if isinstance(before, Streaming):
                 return
-        for after in after.activities:
+        for after_activity in after.activities:
             if not isinstance(after, Streaming):
                 return
-            stream = after
+            stream = after_activity
             if stream.platform != "Twitch":
                 return
             embed = Embed(title=stream.name, url=stream.url)
