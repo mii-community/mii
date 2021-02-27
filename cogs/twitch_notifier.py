@@ -34,10 +34,10 @@ class TwitchNotifier(Cog):
                 name=stream.twitch_name, url=stream.url, icon_url=after.avatar_url
             )
             embed.set_thumbnail(url=after.avatar_url)
-            # msg = f"{after.mention} が {stream.platform} で配信を始めました！"
-            # await self.bot.get_channel(constant.CH_TWITCH).send(
-            #     msg, embed=embed, allowed_mentions=AllowedMentions.none()
-            # )
+            msg = f"{after.mention} が {stream.platform} で配信を始めました！"
+            await self.bot.get_channel(constant.CH_DEBUG).send(
+                msg, embed=embed, allowed_mentions=AllowedMentions.none()
+            )
 
 
 def setup(bot: Bot):
