@@ -13,7 +13,7 @@ class TwitchNotifier(Cog):
             if isinstance(before, Streaming):
                 return
         for after_activity in after.activities:
-            if not isinstance(after, Streaming):
+            if not isinstance(after_activity, Streaming):
                 continue
             stream = after_activity
             if stream.platform != "Twitch":
