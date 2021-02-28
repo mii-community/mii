@@ -41,7 +41,8 @@ class Twitch(Cog):
             for after_activity in after.activities:
                 if not isinstance(after_activity, Streaming):
                     continue
-
+                if after_activity.platform != "Twitch":
+                    continue
                 await ch_twitch.send(
                     f"{after.mention} が配信を始めました！",
                     embed=self.to_embed(after_activity, after),
