@@ -18,8 +18,8 @@ class Poll(Cog):
         emojis = []
         if len(args) == 0:
             emojis += [
-                "<:__sansei:703788213919023104>",
-                "<:__hantai:703788248362647594>",
+                "<:___increment:739136647592935494>",
+                "<:___decrement:739136716924911748>",
             ]
         else:
             for arg in args:
