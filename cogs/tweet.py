@@ -12,7 +12,7 @@ class Tweet(Cog):
         if message.channel.id != constant.CH_TWEET:
             return
         messages = await message.channel.history().flatten()
-        await message.channel.delete_messages(messages[15:])
+        await message.channel.delete_messages(messages[25:])
 
 
 def setup(bot: Bot):
