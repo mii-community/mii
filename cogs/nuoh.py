@@ -11,6 +11,8 @@ class Nuoh(Cog):
 
     @Cog.listener()
     async def on_message(self, message: Message):
+        if message.author.bot:
+            return
         if any(map(message.content.__contains__, self.nuoh)):
             await message.channel.send(
                 "https://cdn.discordapp.com/attachments/752286472383758416/807988458290806854/unknown.png"
