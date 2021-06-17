@@ -31,7 +31,8 @@ class PickRandomMessage(Cog):
                     f"[Audio: {a.filename}]" if a.url.endswith((".wav", ".mp3", ".ogg")) else a.url)
 
             await self.webhook.send(
-                content=(message.content + additional_messages) or "empty message",
+                content=(message.content + additional_messages) or (
+                    "" if message.embeds else "empty message"),
                 username=f"{message.author.display_name}  {message.created_at.strftime('%Y年%m月%d日 %H時%M分')}",
                 avatar_url=message.author.avatar_url,
                 files=fixed_files,
