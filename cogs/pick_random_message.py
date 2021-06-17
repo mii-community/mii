@@ -32,7 +32,7 @@ class PickRandomMessage(Cog):
 
             await self.webhook.send(
                 content=(message.content + additional_messages) or (
-                    "" if message.embeds else "empty message"),
+                    "" if message.embeds or fixed_files else "empty message"),
                 username=f"{message.author.display_name}  {message.created_at.strftime('%Y年%m月%d日 %H時%M分')}",
                 avatar_url=message.author.avatar_url,
                 files=fixed_files,
