@@ -1,32 +1,35 @@
-import constant
-from discord import AllowedMentions
+from discord import AllowedMentions, Guild, Member, Message, RawReactionActionEvent, Role, TextChannel
 from discord.ext.commands import Bot, Cog
 
+import constant
 
-class Register(Cog):
-    def __init__(self, bot: Bot):
+
+class Authorizer(Cog):
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
     @Cog.listener()
-    async def on_raw_reaction_add(self, reaction):
-        if reaction.channel_id != constant.CH_REGISTER:
+    async def on_raw_reaction_add(self, reaction: RawReactionActionEvent) -> None:
+        if (reaction.channel_id != constant.CH_AUTHORIZE) or reaction.member.bot:
             return
 
-        user = reaction.member
-        guild = self.bot.get_guild(reaction.guild_id)
-        role_member = guild.get_role(constant.ROLE_MEMBER)
-        ch_register = self.bot.get_channel(constant.CH_REGISTER)
-        message = await ch_register.fetch_message(reaction.message_id)
-        if role_member in user.roles:
+        # 新規参加の頻度 > 再起動の頻度 になったら毎回取得するのはやめると良さそう。
+        new_member: Member = reaction.member
+        target_guild: Guild = self.bot.get_guild(constant.GUILD_ID)
+        members_role: Role = target_guild.get_role(constant.ROLE_MEMBER)
+        auth_channel: TextChannel = self.bot.get_channel(constant.CH_AUTHORIZE)
+        auth_message: Message = await auth_channel.fetch_message(reaction.message_id)
+        join_log_channel: TextChannel = self.bot.get_channel(constant.CH_JOIN_LOG)
+
+        if members_role in new_member.roles:
             return
-        await user.add_roles(role_member)
-        ch_notify = self.bot.get_channel(constant.CH_JOIN)
-        await ch_notify.send(
-            f"{user.mention}が参加しました。",
+        await new_member.add_roles(members_role)
+        await auth_message.remove_reaction(reaction.emoji, new_member)
+        await join_log_channel.send(
+            f"{new_member.mention} が参加しました。",
             allowed_mentions=AllowedMentions.none(),
         )
-        await message.remove_reaction(reaction.emoji, user)
 
 
-def setup(bot: Bot):
-    bot.add_cog(Register(bot))
+def setup(bot: Bot) -> None:
+    bot.add_cog(Authorizer(bot))
