@@ -10,7 +10,7 @@ class Ping(Cog):
         self.bot = bot
 
     @command()
-    async def ping(self, ctx: Context):
+    async def ping(self, ctx: Context) -> None:
         tmp = monotonic()
         reply = await ctx.reply("計算中...")
         latency = (monotonic() - tmp) * 1000

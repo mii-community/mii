@@ -1,5 +1,6 @@
 from io import BytesIO, StringIO
 from json import dumps, loads
+from os.path import basename
 from typing import Dict, List
 
 from discord import File, Guild, Member, Message, TextChannel
@@ -26,15 +27,8 @@ class RoleManager(Cog):
     async def on_ready(self):
         self.store_channel: TextChannel = self.bot.get_channel(constant.CH_STORE_ROLE_DATA)
         self.target_guild: Guild = self.store_channel.guild
-        role_data = BytesIO()
 
-        try:
-            message_with_data: Message = await self.store_channel.history().filter(self.has_role_data).next()
-            await message_with_data.attachments[0].save(role_data)
-            self.role_cache = loads(role_data.read().decode("UTF-8"))
-        except Exception:  # データが読み込めない場合、データが存在しない場合など
-            self.role_cache = dict()
-
+        await self.role_load()
         self.role_cache.update(
             {
                 str(member.id): [role.id for role in member.roles]
@@ -42,7 +36,7 @@ class RoleManager(Cog):
             }
         )
         await self.role_save()
-        print("launched role_save")
+        print(f"Launched {basename(__file__)[:-3]}")
 
     @Cog.listener()
     async def on_member_update(self, before: Member, after: Member):
@@ -63,6 +57,16 @@ class RoleManager(Cog):
         # bool(None) -> false
         roles = list(filter(bool, map(self.target_guild.get_role, role_ids)))
         await member.edit(roles=roles)
+
+    async def role_load(self) -> None:
+        try:
+            message_with_data: Message = await self.store_channel.history().filter(self.has_role_data).next()
+        except Exception:
+            self.role_cache = dict()
+            return
+        role_data = BytesIO()
+        await message_with_data.attachments[0].save(role_data)
+        self.role_cache = loads(role_data.read().decode("UTF-8"))
 
     async def role_save(self) -> None:
         role_json = File(

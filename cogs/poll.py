@@ -27,9 +27,9 @@ class Poll(Cog):
             emojis.extend(["<:___increment:739136647592935494>", "<:___decrement:739136716924911748>"])
         else:
             for i, element in enumerate(args):
-                reaction = chr(const_emoji_large_a + i)
-                elements.append(f"{reaction}：{element}")
-                emojis.append(reaction)
+                emoji = chr(const_emoji_large_a + i)
+                elements.append(f"{emoji}：{element}")
+                emojis.append(emoji)
 
         poll_board = Embed(title=title, description="\n".join(elements), color=0xffff00)
         message = await ctx.send(embed=poll_board)
