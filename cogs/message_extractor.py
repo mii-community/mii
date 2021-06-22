@@ -1,3 +1,4 @@
+
 from random import randint
 from typing import List
 
@@ -8,24 +9,26 @@ from discord.ext.tasks import loop
 import constant
 
 
-class PickRandomMessage(Cog):
-    def __init__(self, bot: Bot) -> None:
+class MessageExtractor(Cog):
+    __slots__ = "bot", "target_messages", "webhook"
+
+    def __init__(self, bot: Bot):
         self.bot = bot
         self.send_random_message.start()
 
     def slice_five_messages(self) -> List[Message]:
-        i = randint(3, len(self.pickup_source) - 2)
-        return self.pickup_source[i - 3:i + 2]
+        i = randint(3, len(self.target_messages) - 2)
+        return self.target_messages[i - 3:i + 2]
 
     @staticmethod
-    def attachment_to_text(attachment: Attachment) -> str:
+    def attachment_to_string(attachment: Attachment) -> str:
         # 音声ファイルの URL をクリックするとそのファイルをダウンロードしてしまうので加工する。
         if attachment.url.endswith((".wav", ".mp3", ".ogg")):
             return f"[Audio: {attachment.filename}]"
         else:
             return attachment.url
 
-    @loop(hours=1)
+    @loop(hours=4)
     async def send_random_message(self) -> None:
         messages = self.slice_five_messages()
         await self.webhook.send(content=messages[2].jump_url)
@@ -33,7 +36,7 @@ class PickRandomMessage(Cog):
             # Webhook で Sticker を送れないので加工する。
             stickers_name = "".join(f"\n[Sticker: {s.name}]" for s in message.stickers)
             attachments_text = "".join(
-                f"\n{self.attachment_to_text(a)}" for a in message.attachments if not a.is_spoiler()
+                f"\n{self.attachment_to_string(a)}" for a in message.attachments if not a.is_spoiler()
             )
             spoiled_files = [await a.to_file(spoiler=True) for a in message.attachments if a.is_spoiler()]
 
@@ -58,13 +61,13 @@ class PickRandomMessage(Cog):
         # get_channel() などの関数は、クライアントの内部キャッシュの準備が完了するまで
         # None を返してくるので、ready イベントが発生するまで待機する。
         await self.bot.wait_until_ready()
-        ch_pickup_source: TextChannel = self.bot.get_channel(constant.CH_PICKUP_SOURCE)
-        self.pickup_source: List[Message] = await ch_pickup_source.history(limit=None, oldest_first=True).flatten()
+        target_channel: TextChannel = self.bot.get_channel(constant.CH_PICKUP_SOURCE)
+        self.target_messages: List[Message] = await target_channel.history(limit=None, oldest_first=True).flatten()
         self.webhook: Webhook = utils.get(
             await self.bot.get_channel(constant.CH_SEND_TO).webhooks(),
             name=constant.WEBHOOK_NAME
         )
 
 
-def setup(bot: Bot) -> None:
-    bot.add_cog(PickRandomMessage(bot))
+def setup(bot: Bot):
+    bot.add_cog(MessageExtractor(bot))
