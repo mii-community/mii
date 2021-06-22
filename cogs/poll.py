@@ -1,35 +1,39 @@
+from typing import List
+
 from discord import Embed
 from discord.ext.commands import Bot, Cog, Context, command
 
 
 class Poll(Cog):
+    __slots__ = "bot"
+
     def __init__(self, bot: Bot):
         self.bot = bot
 
     @command()
-    async def poll(self, ctx: Context, title: str, *args):
-        """!poll <title> <任意の数の要素(21未満、指定しなければ さんせいorはんたい)> で投票を行います。"""
-        if len(args) > 21:
-            await ctx.send("引数が多すぎます。")
+    async def poll(self, ctx: Context, title: str, *args: str) -> None:
+        """!poll <title> <任意の数の要素(20以下、指定しなければ +1 / -1 )> で投票を行います。"""
+        # メッセージへのリアクションは20種類までしかできない
+        if len(args) > 20:
+            await ctx.reply("Too Many Arguments. Maximum number of reactions reached (20)")
             return
-        emoji = 0x0001F1E6
-        num = 0
-        content = ""
-        emojis = []
+
+        # 絵文字 A の定数。インクリメントすると B, C, D ... となる
+        const_emoji_large_a = 0x1f1e6
+        elements: List[str] = []
+        emojis: List[str] = []
+
         if len(args) == 0:
-            emojis += [
-                "<:___increment:739136647592935494>",
-                "<:___decrement:739136716924911748>",
-            ]
+            emojis.extend(["<:___increment:739136647592935494>", "<:___decrement:739136716924911748>"])
         else:
-            for arg in args:
-                reac = chr(emoji + num)
-                content += f"{reac}：{arg}\n"
-                num += 1
-                emojis.append(reac)
-        embed = Embed(title=title, description=content, color=0x3AEE67)
-        msg = await ctx.send(embed=embed)
-        [await msg.add_reaction(e) for e in emojis]
+            for i, element in enumerate(args):
+                reaction = chr(const_emoji_large_a + i)
+                elements.append(f"{reaction}：{element}")
+                emojis.append(reaction)
+
+        poll_board = Embed(title=title, description="\n".join(elements), color=0xffff00)
+        message = await ctx.send(embed=poll_board)
+        [await message.add_reaction(emoji) for emoji in emojis]
 
 
 def setup(bot: Bot):
