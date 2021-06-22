@@ -8,7 +8,7 @@ from discord.ext.commands import Bot, Cog
 import constant
 
 
-class RoleSave(Cog):
+class RoleManager(Cog):
     __slots__ = ("bot", "store_channel", "target_guild", "role_cache")
     role_cache: Dict[str, List[int]]
 
@@ -24,7 +24,7 @@ class RoleSave(Cog):
 
     @Cog.listener()
     async def on_ready(self):
-        self.store_channel: TextChannel = self.bot.get_channel(constant.CH_ROLE_SAVE)
+        self.store_channel: TextChannel = self.bot.get_channel(constant.CH_STORE_ROLE_DATA)
         self.target_guild: Guild = self.store_channel.guild
         role_data = BytesIO()
 
@@ -73,4 +73,4 @@ class RoleSave(Cog):
 
 
 def setup(bot: Bot):
-    bot.add_cog(RoleSave(bot))
+    bot.add_cog(RoleManager(bot))
