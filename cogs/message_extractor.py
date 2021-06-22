@@ -8,7 +8,7 @@ from discord.ext.tasks import loop
 import constant
 
 
-class PickRandomMessage(Cog):
+class MessageExtractor(Cog):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
         self.send_random_message.start()
@@ -67,4 +67,4 @@ class PickRandomMessage(Cog):
 
 
 def setup(bot: Bot) -> None:
-    bot.add_cog(PickRandomMessage(bot))
+    bot.add_cog(MessageExtractor(bot))
