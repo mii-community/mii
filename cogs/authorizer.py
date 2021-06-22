@@ -12,7 +12,7 @@ class Authorizer(Cog):
 
     @Cog.listener()
     async def on_raw_reaction_add(self, reaction: RawReactionActionEvent):
-        if (reaction.guild_id != constant.GUILD_ID) or reaction.member.bot:
+        if (reaction.channel_id != constant.CH_AUTHORIZE) or reaction.member.bot:
             return
 
         # 新規参加の頻度 > 再起動の頻度 になったら毎回取得するのはやめると良さそう。
