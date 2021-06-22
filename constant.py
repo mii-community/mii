@@ -47,7 +47,7 @@ TABLE_NAME = os.getenv("TABLE_NAME", "mii_channels")
 COUNT_EMOJI = os.getenv("COUNT_EMOJI", "mii_count_custom_emoji")
 
 # emoji
-PIN_EMOJI = "\N{PUSHPIN}"
+EMOJI_PUSHPIN = "\N{PUSHPIN}"
 
 # webhook
 WEBHOOK_NAME = str(os.getenv("WEBHOOK_NAME", "mii"))
