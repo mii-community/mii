@@ -28,7 +28,7 @@ class MessageExtractor(Cog):
         else:
             return attachment.url
 
-    @loop(hours=1)
+    @loop(hours=4)
     async def send_random_message(self) -> None:
         messages = self.slice_five_messages()
         await self.webhook.send(content=messages[2].jump_url)
