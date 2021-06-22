@@ -1,6 +1,4 @@
 import asyncio
-import glob
-import os
 import pathlib
 import traceback
 
@@ -22,8 +20,8 @@ class MyBot(commands.Bot):
         for cog in pathlib.Path("cogs/").glob("*.py"):
             try:
                 self.load_extension("cogs." + cog.stem)
-                print(f"{cog.stem}.pyは正常に読み込まれました。")
-            except:
+                print(f"Loaded Extension: {cog.stem}")
+            except Exception:
                 traceback.print_exc()
 
     @classmethod
@@ -33,7 +31,7 @@ class MyBot(commands.Bot):
         return instance
 
     async def on_ready(self):
-        print("logged in as:", self.user.name, self.user.id)
+        print("Logged in as:", self.user.name, self.user.id)
 
 
 class Help(commands.DefaultHelpCommand):
