@@ -4,7 +4,7 @@ from discord.ext.commands import Bot, Cog
 import constant
 
 
-class Pin(Cog):
+class PinMessageByReaction(Cog):
     __slots__ = "bot"
 
     def __init__(self, bot: Bot):
@@ -34,14 +34,16 @@ class Pin(Cog):
             return
 
         message = await self.fetch_message_from_reaction(reaction)
+        if not message.pinned:
+            return
         if utils.get(message.reactions, emoji=constant.EMOJI_PUSHPIN):
             return
         await message.unpin()
         await message.reply(
-            "リアクションがゼロになったため、ピン留めが解除されました。",
+            "'📌' のリアクション数が 0 になったため、ピン留めが解除されました。",
             allowed_mentions=AllowedMentions.none()
         )
 
 
 def setup(bot: Bot):
-    bot.add_cog(Pin(bot))
+    bot.add_cog(PinMessageByReaction(bot))
