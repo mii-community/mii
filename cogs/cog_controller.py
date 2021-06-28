@@ -14,17 +14,17 @@ class CogController(Cog, command_attrs=dict(hidden=True)):
         return has_permission
 
     @command(name="load")
-    async def load_cog(self, ctx: Context, cog: str):
+    async def load_cog(self, ctx: Context, cog: str) -> None:
         self.bot.load_extension("cogs." + cog)
         await ctx.reply(f"Loaded Extension: {cog}")
 
     @command(name="unload")
-    async def unload_cog(self, ctx: Context, cog: str):
+    async def unload_cog(self, ctx: Context, cog: str) -> None:
         self.bot.unload_extension("cogs." + cog)
         await ctx.reply(f"Unloaded Extension: {cog}")
 
     @command(name="reload")
-    async def reload_cog(self, ctx: Context, cog: str):
+    async def reload_cog(self, ctx: Context, cog: str) -> None:
         self.bot.reload_extension("cogs." + cog)
         await ctx.reply(f"Reloaded Extension: {cog}")
 
