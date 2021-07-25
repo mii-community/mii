@@ -48,6 +48,7 @@ COUNT_EMOJI = os.getenv("COUNT_EMOJI", "mii_count_custom_emoji")
 
 # emoji
 EMOJI_PUSHPIN = "\N{PUSHPIN}"
+EMOJI_MII_PEEKING = "<:MiiPeeking:821556171277074442>"
 
 # webhook
 WEBHOOK_NAME = str(os.getenv("WEBHOOK_NAME", "mii"))
