@@ -28,7 +28,12 @@ class Owner(Cog, command_attrs=dict(hidden=True)):
             )
         # データの上書き
         else:
-            await self.bot.database.update(
+            await self.bot.database.delete_row(
+                constant.TABLE_NAME,
+                author_id=member.id,
+                channel_type="room",
+            )
+            await self.bot.database.insert(
                 constant.TABLE_NAME,
                 {"author_id": member.id},
                 channel_id=channel.id,
