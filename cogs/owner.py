@@ -30,7 +30,7 @@ class Owner(Cog, command_attrs=dict(hidden=True)):
         else:
             await self.bot.database.delete_row(
                 constant.TABLE_NAME,
-                author_id=member.id,
+                channel_id=channel.id,
                 channel_type="room",
             )
             await self.bot.database.insert(
