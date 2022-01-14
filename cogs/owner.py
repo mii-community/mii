@@ -16,7 +16,7 @@ class Owner(Cog, command_attrs=dict(hidden=True)):
             channel = ctx.channel
         # データベースからデータをもらう
         data_ch = await self.bot.database.fetch_row(
-            constant.TABLE_NAME, author_id=member.id, channel_type="room"
+            constant.TABLE_NAME, channel_id=channel.id, channel_type="room"
         )
         # データがなければ新規作成
         if data_ch is None:
@@ -28,12 +28,7 @@ class Owner(Cog, command_attrs=dict(hidden=True)):
             )
         # データの上書き
         else:
-            await self.bot.database.delete_row(
-                constant.TABLE_NAME,
-                channel_id=channel.id,
-                channel_type="room",
-            )
-            await self.bot.database.insert(
+            await self.bot.database.update(
                 constant.TABLE_NAME,
                 {"author_id": member.id},
                 channel_id=channel.id,
